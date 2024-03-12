@@ -1,0 +1,117 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "status",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "errorMessage",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "runDate",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "connDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "metadataDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "queryDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "readDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "extractDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "uploadDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "totalDurationInSec",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "rowCount",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "filesCount",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "filesSize",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fileName",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ucmId",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "docId",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "requestId",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "scheduleId",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "jobId",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "parentJsonFileName",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "DAG_RUN_ID",
+    "type": "STRING"
+  }
+]

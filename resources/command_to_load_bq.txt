@@ -1,0 +1,29 @@
+bq show --format=prettyjson helix-data-sit:helix_fin_gbcc_dw.DW_AR_GLOBAL_RECEIPT_REGISTER_SNAPSHOT_AGG | jq '.schema.fields'
+
+bq show --format=prettyjson helix-data-sit:helix_fin_gbcc_dw.DW_AR_GLOBAL_RECEIPT_REGISTER_ACTUALS_SNAPSHOT | jq '.schema.fields'
+
+
+bq load \
+    --source_format=CSV \
+    --skip_leading_rows=1 \
+    helix_raw.CONV_FND_LOOKUP_VALUES_B \
+    gs://helix-finance-test/Test_Conversion_Data/file_fscmtopmodelam_analyticsserviceam_lookupvaluespvo-batch659919372-20230531_070628.csv \
+    ./Test_Conversion_Schema/CONV_FND_LOOKUP_VALUES_B.json
+	
+bq load \
+    --source_format=CSV \
+    --skip_leading_rows=1 \
+    helix_raw.CONV_FND_LOOKUP_VALUES_TL \
+    gs://helix-finance-test/Test_Conversion_Data/file_fscmtopmodelam_analyticsserviceam_lookupvaluestlpvo-batch397001497-20230531_073401.csv \
+    ./Test_Conversion_Schema/CONV_FND_LOOKUP_VALUES_TL.json
+	
+bq load \
+    --source_format=CSV \
+    --skip_leading_rows=1 \
+    helix_fin_ms_stg.STG_MS_FND_TERRITORIES_TL \
+    gs://helix-finance-data-sit/ms/oc/file_fscmtopmodelam_analyticsserviceam_territoriestlpvo-batch760603879-20231207_053218.csv \
+    STG_MS_FND_TERRITORIES_TL.json
+	
+	
+	
+    gs://helix-finance-platform-sit/ms/oc/schema/STG_MS_FND_TERRITORIES_TL.json

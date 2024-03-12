@@ -1,0 +1,22 @@
+{
+    "statuses": [
+        {
+            "name": "CrmAnalyticsAM.FscmAnalyticsExtensibilityAM.Eqx_AR_Charge_Object_c",
+            "code": "CrmAnalyticsAM.FscmAnalyticsExtensibilityAM.Eqx_AR_Charge_Object_c",
+            "status": "SUCCESS",
+            "errorMessage": null,
+            "runDate": "2024-01-19T06:24:40.012Z",
+            "connDurationInSec": 0,
+            "metadataDurationInSec": 0,
+            "queryDurationInSec": 6,
+            "readDurationInSec": 727,
+            "extractDurationInSec": 727,
+            "uploadDurationInSec": 32,
+            "totalDurationInSec": 738,
+            "rowCount": 2589484,
+            "filesCount": 4,
+            "filesSize": 423849559,
+            "fileName": null
+        }
+    ]
+}

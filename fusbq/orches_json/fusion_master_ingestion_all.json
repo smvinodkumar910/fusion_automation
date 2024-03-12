@@ -1,0 +1,134 @@
+{
+    "dag_config":
+    {
+        "dag_id": "fusion_master_ingestion_all",
+        "owner": "Helix Platform Team",
+        "start_date": "2022-09-28",
+        "schedule_interval": null,
+        "time_zone": "Asia/Bangkok",
+        "depends_on_past": false,
+        "retries": 0,
+        "retry_delay": 60,
+        "email":
+        [
+            "vmadhavan@equinix.com",
+            "aayushi@equinix.com"
+        ],
+        "email_on_failure": true,
+        "email_on_retry": false,
+        "sla": 60,
+        "tags":
+        [
+            "fusion-ingestion-orchfw"
+        ],
+        "tags_for_batch_holds":
+        [
+            "FUSION-AR",
+            "FUSION-ALL"
+        ]
+    },
+    "task_config":
+    {
+        "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+        "data_project_id": "helix-data-dev",
+        "tasks":
+        [
+          {
+            "task_name": "MAST_001_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-finance-test",
+              "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_partiesanalyticsam_customeraccount*.csv",
+              "schema_object": "fusion_schema/STG_FUSION_HZ_CUST_ACCOUNTS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_HZ_CUST_ACCOUNTS"
+            }
+          },
+          {
+            "task_name": "MAST_001_MERGE",
+            "template_reference": "FUSION-DATA-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_stg.STG_FUSION_HZ_CUST_ACCOUNTS",
+              "dl_table": "helix_dl.DL_FUSION_HZ_CUST_ACCOUNTS",
+              "raw_table": "helix_raw.FUSION_HZ_CUST_ACCOUNTS",
+              "primary_key_columns": "CUSTACCOUNTID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MAST_001_STG_LOAD"
+            ]
+          }
+        ]
+    },
+    "template_config":
+    {
+        "merge_templates":
+        [
+            {
+                "template_id": "FUSION-DATA-MERGE-1",
+                "merge_type": "MERGE_UPDATE",
+                "config":
+                {
+                    "primary_key_columns": "",
+                    "incremental_date_columns": "",
+                    "truncate_stg_table": "True"
+                },
+                "lag_minutes": 0
+            }
+        ],
+        "execution_templates":
+        [
+            {
+                "template_id": "FUSION_UCM2GCS",
+                "execution_type": "DATAFLOW",
+                "config":
+                {
+                    "dataflow_template_location": "gs://eqx-helix-fusion-dev/templates/fusiontogcp.json",
+                    "parameters":
+                    {
+                        "projectId": "it-helix-platform-dev",
+                        "bucketName": "helix-finance-test",
+                        "inboundFolderPath": "inbound_gl",
+                        "processedFolderPath": "processed_gl",
+                        "jsonToCsvFolderPath": "inbound_gl/metadata_json",
+                        "metadataToCsvFolderPath": "inbound_gl/metadata_table",
+                        "controlSchduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+                        "soapEndPointUrl": "https://fa-etfl-dev15-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+                        "soapAction": "soapAction for the pipeline",
+                        "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+                        "soapUcm": "http://www.oracle.com/UCM",
+                        "username": "eqx_helix",
+                        "secret": "oracle-dev15-password",
+                        "bip_files": "BIP_EXTRACT_GL_DAILY_RATES_REPORT",
+                        "bicc_schedule_names": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('EQX_GL_ALL_EXTRACT_SCHEDULE' ) ",
+                        "currentTime": "?",
+                        "bip_lastRunTime": "?",
+                        "bip_dag_run_id": "?"
+                    },
+                    "environment":
+                    {
+                        "tempLocation": "gs://helix-finance-test/dataflow/temp/fusion_ucm2gcs/",
+                        "stagingLocation": "gs://helix-finance-test/dataflow/staging/fusion_ucm2gcs/",
+                        "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+                        "network": "eqx-nonprod"
+                    }
+                },
+                "lag_minutes": 0
+            },
+            {
+                "template_id": "FUSION_GCS2BQ",
+                "execution_type": "GCS_TO_BQ",
+                "config":
+                {
+                    "source_format": "CSV",
+                    "skip_leading_rows" : "1",
+                    "autodetect": "False",
+                    "write_disposition" : "WRITE_TRUNCATE",
+                    "allow_quoted_newlines" : "True",
+                    "retries":"0"
+                }
+            }
+        ]
+    }
+}

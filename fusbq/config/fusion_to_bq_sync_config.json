@@ -1,0 +1,143 @@
+{
+  "environment": "helix-platform-composer-dev01",
+  "helix-automation": {
+    "pipeline-name": "fusion_automation.py",
+    "project_name": "it-helix-platform-dev",
+    "data_project_name": "helix-data-dev",
+    "bucket_name": "helix-finance-test",
+    "pvo_list_path": "gs://helix-finance-test/helix_automation_resource/pvos_list.csv",
+    "bip_list_path": "gs://helix-finance-test/helix_automation_resource/bip_list.csv",
+    "base_file_path": "gs://helix-finance-test/helix_automation_resource/BASE_PVOS.csv",
+    "base_bip_file_path": "gs://helix-finance-test/helix_automation_resource/BASE_BIP.csv",
+    "bicc_file_path": "gs://helix-finance-test/helix_automation_resource/Rel13_23B_BICC_FSCM_Database_Mapping_with_ViewObjects.csv",
+    "ddl_target_path": "helix_automation_output/",
+    "sample_extract_path": "gs://helix-finance-test/helix_automation_resource/sample_extracts/",
+    "temp_path": "tempfiles/",
+    "rest_api_url": "https://fa-etfl-dev7-saasfaprod1.fa.ocs.oraclecloud.com/biacm/rest",
+    "rest_api_user": "eqx_helix",
+    "rest_api_secret": "oracle-fusion-dev7-password",
+    "meta_dataset_name": "BQ_CTL_METADATA",
+    "fusion_schema": "fusion_schema",
+    "pvo_meta_path": "gs://helix-finance-test/pvo_metadata/",
+    "gcs2bq_template_id": "FUSION_GCS2BQ",
+    "data_merge_template_id": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+    "softdel_merge_template_id": "FUSION-SOFT-DEL-MERGE-1",
+    "source_objects_path": "/inbound/",
+    "schema_object_path": "/oc/schema/",
+    "ucm2gcs_task_id": "UCM2GCS_DATAFLOW",
+    "archive_task_id": "ARCHIVE_FILES",
+    "bq_datasets": {
+      "GL": {
+        "STG_SCHEMA": "helix_fin_gl_stg",
+        "RAW_SCHEMA": "helix_fin_gl_raw",
+        "DW_SCHEMA": "helix_fin_gl_dw",
+        "HIST_SCHEMA": "helix_fin_gl_dl",
+        "VIEW_SCHEMA":"helix_fin_gl_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "AR": {
+        "STG_SCHEMA": "helix_fin_gbcc_stg",
+        "RAW_SCHEMA": "helix_fin_gbcc_raw",
+        "DW_SCHEMA": "helix_fin_gbcc_dw",
+        "HIST_SCHEMA": "helix_fin_gbcc_dl",
+        "VIEW_SCHEMA":"helix_fin_gbcc_raw_vw",
+        "BUCKET_NAME" :"helix-fin-oc-gbcc-dev",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "FA": {
+        "STG_SCHEMA": "helix_fin_tax_stg",
+        "RAW_SCHEMA": "helix_fin_tax_raw",
+        "DW_SCHEMA": "helix_fin_tax_dw",
+        "HIST_SCHEMA": "helix_fin_tax_dl",
+        "VIEW_SCHEMA":"helix_fin_tax_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "ZX": {
+        "STG_SCHEMA": "helix_fin_tax_stg",
+        "RAW_SCHEMA": "helix_fin_tax_raw",
+        "DW_SCHEMA": "helix_fin_tax_dw",
+        "HIST_SCHEMA": "helix_fin_tax_dl",
+        "VIEW_SCHEMA":"helix_fin_tax_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "CZ": {
+        "STG_SCHEMA": "helix_fin_tax_stg",
+        "RAW_SCHEMA": "helix_fin_tax_raw",
+        "DW_SCHEMA": "helix_fin_tax_dw",
+        "HIST_SCHEMA": "helix_fin_tax_dl",
+        "VIEW_SCHEMA":"helix_fin_tax_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "MS": {
+        "STG_SCHEMA": "helix_fin_ms_stg",
+        "RAW_SCHEMA": "helix_fin_ms_raw",
+        "DW_SCHEMA": "helix_fin_ms_dw",
+        "HIST_SCHEMA": "helix_fin_ms_dl",
+        "VIEW_SCHEMA":"helix_fin_ms_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "TREASURY": {
+        "STG_SCHEMA": "helix_fin_trsy_stg",
+        "RAW_SCHEMA": "helix_fin_trsy_raw",
+        "DW_SCHEMA": "helix_fin_trsy_dw",
+        "HIST_SCHEMA": "helix_fin_trsy_dl",
+        "VIEW_SCHEMA":"helix_fin_trsy_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "CE": {
+        "STG_SCHEMA": "helix_fin_trsy_stg",
+        "RAW_SCHEMA": "helix_fin_trsy_raw",
+        "DW_SCHEMA": "helix_fin_trsy_dw",
+        "HIST_SCHEMA": "helix_fin_trsy_dl",
+        "VIEW_SCHEMA":"helix_fin_trsy_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      },
+      "S2P": {
+        "STG_SCHEMA": "helix_anly_s2p_stg",
+        "RAW_SCHEMA": "helix_anly_s2p_raw",
+        "DW_SCHEMA": "helix_anly_s2p_dw",
+        "HIST_SCHEMA": "helix_anly_s2p_dl",
+        "VIEW_SCHEMA":"helix_anly_s2p_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-anly-oc-s2p-dev",
+        "DATA_BUCKET_NAME":"helix-anly-oc-s2p-dev"
+      },
+      "PPM": {
+        "STG_SCHEMA": "helix_fin_ppm_stg",
+        "RAW_SCHEMA": "helix_fin_ppm_raw",
+        "DW_SCHEMA": "helix_fin_ppm_dw",
+        "HIST_SCHEMA": "helix_fin_ppm_dl",
+        "VIEW_SCHEMA":"helix_fin_ppm_raw_vw",
+        "PLATFORM_BUCKET_NAME" :"helix-finance-platform-dev",
+        "DATA_BUCKET_NAME":"helix-finance-data-dev"
+      }
+    },
+    "bip_cf_url":"https://us-west1-it-helix-platform-dev.cloudfunctions.net/bip-ddl-integration",
+    "bip_cf_props":{
+        "report_service_url": "https://fa-etfl-dev7-saasfaprod1.fa.ocs.oraclecloud.com/xmlpserver/services/v2/ReportService",
+        "chunk_size": "1000000000",
+        "table_schema_report": "/~eqx_helix/Vinod/FUSION_COLUMN_CHECK.xdo",
+        "table_schema_tgt_path":"helix_automation_resource/BIP_FUSION_TABLE_SCHEMA.csv",
+        "req_col_tgt_path":"helix_automation_resource/BIP_REQUIRED_TABLE_COLUMNS.csv",
+        "user_id":"eqx_helix",
+        "gcpSecretManagerKey":"oracle-fusion-dev7-password",
+        "projectId":"it-helix-platform-dev",
+        "bucketName":"helix-finance-test"
+    }
+  },
+  "configuration": {
+    "labels": {
+      "cost_center": "helix-finance",
+      "point_of_contacts": "vmadhavan",
+      "custom_label": "fusion_to_bq_sync",
+      "team": "it-finance-analytics-dev"
+    }
+  }
+}

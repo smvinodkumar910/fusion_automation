@@ -1,0 +1,279 @@
+{
+  "dag_config": {
+    "dag_id": "fusion_ar_sample_dag",
+    "owner": "Helix Platform Team",
+    "start_date": "2023-05-30",
+    "schedule_interval": "* 1-23/3 * * *",
+    "time_zone": "Asia/Bangkok",
+    "depends_on_past": false,
+    "retries": 0,
+    "retry_delay": 60,
+    "email": [
+      "vmadhavan@equinix.com",
+      "aayushi@equinix.com"
+    ],
+    "email_on_failure": true,
+    "email_on_retry": false,
+    "sla": 60,
+    "tags": [
+      "fusion-ingestion-orchfw"
+    ],
+    "tags_for_batch_holds": [
+      "FUSION-FINANCE-AR",
+      "FUSION-FINANCE-ALL"
+    ],
+    "framework_version": "v1.0"
+  },
+  "task_config": {
+    "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+    "data_project_id": "helix-data-dev",
+    "tasks": [
+      {
+        "task_name": "UCM2GCS_DATAFLOW",
+        "task_type": "EXECUTION",
+        "template_reference": "FUSION_UCM2GCS",
+        "config": {
+          "parameters": {},
+          "environment": {}
+        }
+      },
+      {
+        "task_name": "LOAD_UCM_FILE_EXTRACT",
+        "template_reference": "FUSION_GCS2BQ",
+        "task_type": "EXECUTION",
+        "config": {
+          "bucket": "helix-finance-test",
+          "source_objects": "inbound_ar/metadata_table/*",
+          "schema_object": "fusion_schema/BICC_UCM_FILE_EXTRACT.json",
+          "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_FILE_EXTRACT"
+        },
+        "upstream_tasks": [
+          "UCM2GCS_DATAFLOW"
+        ],
+        "downstream_tasks": [
+          "ARCHIVE_FILES"
+        ]
+      },
+      {
+        "task_name": "LOAD_UCM_JSON_DETAIL",
+        "template_reference": "FUSION_GCS2BQ",
+        "task_type": "EXECUTION",
+        "config": {
+          "bucket": "helix-finance-test",
+          "source_objects": "inbound_ar/metadata_json/*",
+          "schema_object": "fusion_schema/BICC_UCM_JSON_DETAILS.json",
+          "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_JSON_DETAILS"
+        },
+        "upstream_tasks": [
+          "UCM2GCS_DATAFLOW"
+        ],
+        "downstream_tasks": [
+          "ARCHIVE_FILES"
+        ]
+      },
+      {
+        "task_name": "AR_046_STG_LOAD",
+        "template_reference": "FUSION_GCS2BQ",
+        "task_type": "EXECUTION",
+        "config": {
+          "bucket": "helix-finance-test",
+          "source_objects": "inbound_ar/file_fscmtopmodelam_finextractam_arbiccextractam_transactionheaderextractpvo*.csv",
+          "schema_object": "fusion_schema/STG_AR_RA_CUSTOMER_TRX_ALL.json",
+          "destination_project_dataset_table": "helix-data-dev.helix_fin_gbcc_stg.STG_AR_RA_CUSTOMER_TRX_ALL"
+        },
+        "upstream_tasks": [
+          "UCM2GCS_DATAFLOW"
+        ]
+      },
+      {
+        "task_name": "AR_046_MERGE",
+        "template_reference": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+        "task_type": "MERGE",
+        "config": {
+          "stg_table": "helix_fin_gbcc_stg.STG_AR_RA_CUSTOMER_TRX_ALL",
+          "dl_table": "helix_fin_gbcc_dl.DL_AR_RA_CUSTOMER_TRX_ALL",
+          "raw_table": "helix_fin_gbcc_raw.AR_RA_CUSTOMER_TRX_ALL",
+          "primary_key_columns": "RACUSTOMERTRXCUSTOMERTRXID",
+          "incremental_date_columns": "RACUSTOMERTRXLASTUPDATEDATE"
+        },
+        "upstream_tasks": [
+          "AR_046_STG_LOAD"
+        ],
+        "downstream_tasks": [
+          "ARCHIVE_FILES"
+        ]
+      },
+      {
+        "task_name": "ARCHIVE_FILES",
+        "task_type": "EXECUTION",
+        "template_reference": "GCS_TO_GCS_ARCHIVE",
+        "config": {}
+      },
+      {
+        "task_name": "AR_046_DW_PROC_EXEC",
+        "task_type": "EXECUTION",
+        "template_reference": "SQL_DW_PROC_1",
+        "config": {
+          "sql_procedure_name": "helix-data-dev.helix_fin_gbcc_dw.PRC_SIL_DW_AR_INVOICE_HEADER",
+          "parameters": " '{{ get_audit_param('dag_run_id') }}' , '{{ get_audit_param('from_delta_key') }}' , '{{ get_audit_param('to_delta_key') }}',  {{ get_audit_param('adhoc_load_flag') }} "
+        },
+        "upstream_tasks": [
+          "ARCHIVE_FILES"
+        ],
+        "downstream_tasks": [
+          "AR_EXASOL_SYNC"
+        ]
+      },
+      {
+        "task_name": "AR_EXASOL_SYNC",
+        "task_type": "EXECUTION",
+        "template_reference": "EXASOL_SYNC_DAG_TRIGGER",
+        "config": {}
+      }
+    ]
+  },
+  "template_config": {
+    "merge_templates": [
+      {
+        "template_id": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+        "merge_type": "MERGE_UPDATE",
+        "config": {
+          "primary_key_columns": "",
+          "incremental_date_columns": "",
+          "truncate_stg_table": "True"
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "FUSION-SOFT-DEL-MERGE-1",
+        "merge_type": "UPDATE_SD_ALL_PK",
+        "config": {
+          "primary_key_columns": "",
+          "incremental_date_columns": ""
+        },
+        "lag_minutes": 0
+      }
+    ],
+    "execution_templates": [
+      {
+        "template_id": "FUSION_UCM2GCS",
+        "execution_type": "DATAFLOW",
+        "config": {
+          "dataflow_template_location": "gs://helix-finance-test/templates/fusion_to_gcs_noencrypt_orch.json",
+          "parameters": {
+            "projectId": "it-helix-platform-dev",
+            "bucketName": "helix-finance-test",
+            "inboundFolderPath": "inbound_ar",
+            "processedFolderPath": "processed_ar",
+            "jsonToCsvFolderPath": "inbound_ar/metadata_json",
+            "metadataToCsvFolderPath": "inbound_ar/metadata_table",
+            "controlSchduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+            "soapEndPointUrl": "https://fa-etfl-dev7-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+            "soapAction": "soapAction for the pipeline",
+            "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+            "soapUcm": "http://www.oracle.com/UCM",
+            "username": "eqx_helix",
+            "secret": "oracle-fusion-dev7-password",
+            "bip_files": "BIP_EXTRACT_GL_DAILY_RATES_REPORT",
+            "bicc_schedule_names": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('Dev7_AR_Schedule_3hourly' ) ",
+            "bip_dag_run_id": "{{ get_audit_param('dag_run_id') }}",
+            "bip_lastRunTime":"{{ get_audit_param('from_delta_key') }}",
+            "currentTime":"{{ get_audit_param('to_delta_key') }}"
+          },
+          "environment": {
+            "tempLocation": "gs://helix-finance-test/dataflow/temp/fusion_ucm2gcs/",
+            "stagingLocation": "gs://helix-finance-test/dataflow/staging/fusion_ucm2gcs/",
+            "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+            "network": "eqx-nonprod"
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "FUSION_GCS2BQ",
+        "execution_type": "GCS_TO_BQ",
+        "config": {
+          "source_format": "CSV",
+          "skip_leading_rows": "1",
+          "autodetect": "False",
+          "write_disposition": "WRITE_APPEND",
+          "allow_quoted_newlines": "True",
+          "retries": "0"
+        }
+      },
+      {
+        "template_id": "FILE-ARCHIVIAL-CLOUD-FUNCTION",
+        "execution_type": "AUTHENTICATED_CLOUD_FUNCTION",
+        "config": {
+          "method": "POST",
+          "url": "https://us-west1-it-helix-platform-dev.cloudfunctions.net/GcsToGcsTransfer",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "source_bucket": "helix-finance-test",
+            "source_object": "inbound_ar/*",
+            "destination_bucket": "helix-finance-test",
+            "destination_object": "archive_ar/",
+            "move_object": "true",
+            "replace": "true"
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "TEAMS_NOTIFICATION_CLOUD_FUNCTION",
+        "execution_type": "AUTHENTICATED_CLOUD_FUNCTION",
+        "config": {
+          "method": "POST",
+          "url": "https://us-west1-it-helix-platform-prod.cloudfunctions.net/ping-teams-channel",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "gcpProjectId": "it-helix-platform-dev",
+            "webhookUrlSecretIdInSecretManager": "fusion_dag_notification_webhook",
+            "content": "DAG: fusion_ar_sample_dag completed Successfully! "
+          },
+          "trigger_rule":"all_done"
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "SQL_DW_PROC_1",
+        "execution_type": "SQL",
+        "config": {
+          "sql_statement_type": "MULTI_STATEMENT"
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "EXASOL_SYNC_DAG_TRIGGER",
+        "execution_type": "TRIGGER_DAG",
+        "config": {
+          "trigger_dag_id": "bigquery_exasol_sync",
+          "wait_for_completion": false,
+          "parameters": {
+            "batch_name": "AR_BQ_TO_EXASOL_SYNC",
+            "etl_proc_wid": "{{ get_audit_param('dag_run_id') }}"
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "GCS_TO_GCS_ARCHIVE",
+        "execution_type": "GCS_TO_GCS",
+        "config": {
+          "source_bucket": "helix-finance-test",
+          "source_objects": [
+            "inbound_ar/*"
+          ],
+          "destination_bucket": "helix-finance-test",
+          "destination_object": "archive_ar/{{ get_audit_param('dag_run_id') }}/",
+          "move_object": true
+        },
+        "lag_minutes": 0
+      }
+    ]
+  }
+}

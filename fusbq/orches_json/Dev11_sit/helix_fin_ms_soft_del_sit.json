@@ -1,0 +1,1059 @@
+{
+    "dag_config": {
+      "dag_id": "helix_fin_ms_soft_del_sit",
+      "owner": "IT-Finance-Analytics-Dev-Team",
+      "start_date": "2023-05-30",
+      "schedule_interval": null,
+      "time_zone": "Asia/Bangkok",
+      "depends_on_past": false,
+      "retries": 2,
+      "retry_delay": 60,
+      "email": [
+        "IT-Finance-Analytics-Dev@equinix.com"
+      ],
+      "email_on_failure": true,
+      "email_on_retry": false,
+      "sla": 60,
+      "tags": [
+        "fusion-ingestion-orchfw"
+      ],
+      "tags_for_batch_holds": [
+        "FUSION-MS",
+        "FUSION-ALL"
+      ],
+      "framework_version": "v1.0"
+    },
+    "task_config": {
+      "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+      "data_project_id": "helix-data-dev",
+      "tasks": [
+        {
+          "task_name": "UCM_TO_GCS",
+          "task_type": "EXECUTION",
+          "template_reference": "FUSION_UCM2GCS",
+          "config": {
+              "parameters": {},
+              "environment": {}
+          }
+      },
+      {
+          "task_name": "LOAD_UCM_FILE_EXTRACT",
+          "template_reference": "FUSION_GCS2BQ_UCM",
+          "task_type": "EXECUTION",
+          "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": "ms_del_inbound/metadata_table/*",
+              "schema_object": "fusion_schema/BICC_UCM_FILE_EXTRACT.json",
+              "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_FILE_EXTRACT"
+          },
+          "upstream_tasks": [
+              "UCM_TO_GCS"
+          ]
+      },
+      {
+          "task_name": "LOAD_UCM_JSON_DETAIL",
+          "template_reference": "FUSION_GCS2BQ_UCM",
+          "task_type": "EXECUTION",
+          "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": "ms_del_inbound/metadata_json/*",
+              "schema_object": "fusion_schema/BICC_UCM_JSON_DETAILS.json",
+              "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_JSON_DETAILS"
+          },
+          "upstream_tasks": [
+              "UCM_TO_GCS"
+          ]
+          },
+          {
+            "task_name": "MS_001_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_iexbiccextractam_collectorextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_AR_COLLECTORS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_AR_COLLECTORS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_002_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_arbiccextractam_receiptmethodextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_AR_RECEIPT_METHODS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_AR_RECEIPT_METHODS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_003_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_scmextractam_egpbiccextractam_itemextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_EGP_SYSTEM_ITEMS_B.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_EGP_SYSTEM_ITEMS_B"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_004_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_analyticsserviceam_lookupvaluespvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_FND_LOOKUP_VALUES_B.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_FND_LOOKUP_VALUES_B"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_005_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_analyticsserviceam_lookupvaluestlpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_FND_LOOKUP_VALUES_TL.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_FND_LOOKUP_VALUES_TL"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_006_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_analyticsserviceam_setidassignmentspvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_FND_SETID_ASSIGNMENTS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_FND_SETID_ASSIGNMENTS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_007_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_analyticsserviceam_setidsetspvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_FND_SETID_SETS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_FND_SETID_SETS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_008_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_analyticsserviceam_territoriestlpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_FND_TERRITORIES_TL.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_FND_TERRITORIES_TL"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_009_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_arbiccextractam_custprofileextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUSTOMER_PROFILES_F.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUSTOMER_PROFILES_F"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_010_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_partiesanalyticsam_customeraccount-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUST_ACCOUNTS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_ACCOUNTS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_011_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finarcustomerspublicmodelam_accountcontact-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUST_ACCOUNT_ROLES.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_ACCOUNT_ROLES"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_012_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_arbiccextractam_custfinancialprofiledextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUST_PROFILE_AMTS_F.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_PROFILE_AMTS_F"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_013_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_arbiccextractam_customerprofileclassextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUST_PROFILE_CLASSES.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_PROFILE_CLASSES"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_014_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_partiesanalyticsam_custaccountsiteuse-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_CUST_SITE_USES_ALL.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_SITE_USES_ALL"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_015_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_partiesanalyticsam_location-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_LOCATIONS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_LOCATIONS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_016_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_partiesanalyticsam_partysite-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_PARTY_SITES.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_PARTY_SITES"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_017_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_partiesanalyticsam_partyusage-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_HZ_PARTY_USG_ASSIGNMENTS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_HZ_PARTY_USG_ASSIGNMENTS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_018_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_scmextractam_scmrcsbiccextractam_invorgparametersextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_INV_ORG_PARAMETERS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_INV_ORG_PARAMETERS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_019_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_hcmtopmodelanalyticsglobalam_personam_emailaddressespvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_PER_EMAIL_ADDRESSES.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_PER_EMAIL_ADDRESSES"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_020_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_arbiccextractam_customerreceiptmethodextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_RA_CUST_RECEIPT_METHODS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_RA_CUST_RECEIPT_METHODS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_021_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finartoppublicmodelam_paymenttermtranslationpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_RA_TERMS_TL.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_RA_TERMS_TL"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_022_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_xlebiccextractam_legalentityextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_XLE_ENTITY_PROFILES.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_XLE_ENTITY_PROFILES"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_023_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_finextractam_xlebiccextractam_registrationextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_XLE_REGISTRATIONS.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_XLE_REGISTRATIONS"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_024_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_fscmtopmodelam_scmextractam_egpbiccextractam_categoryextractpvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_EGP_CATEGORIES_B.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_EGP_CATEGORIES_B"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_025_STG_LOAD",
+            "template_reference": "FUSION_GCS2BQ",
+            "task_type": "EXECUTION",
+            "config": {
+              "bucket": "helix-fin-oc-ms-dev",
+              "source_objects": [
+                "ms_del_inbound/file_hcmtopmodelanalyticsglobalam_personam_persondetailspvo-batch*.pecsv"
+              ],
+              "schema_object": "fusion_schema/STG_DEL_MS_PER_ALL_PEOPLE_F.json",
+              "destination_project_dataset_table": "helix-data-dev.helix_fin_ms_stg_sit.STG_DEL_MS_PER_ALL_PEOPLE_F"
+            },
+            "upstream_tasks": [
+              "LOAD_UCM_FILE_EXTRACT",
+              "LOAD_UCM_JSON_DETAIL"
+            ]
+          },
+          {
+            "task_name": "MS_001_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_AR_COLLECTORS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_AR_COLLECTORS",
+              "primary_key_columns": "ARCOLLECTORCOLLECTORID",
+              "incremental_date_columns": "ARCOLLECTORLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_001_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_002_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_AR_RECEIPT_METHODS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_AR_RECEIPT_METHODS",
+              "primary_key_columns": "ARRECEIPTMETHODRECEIPTMETHODID",
+              "incremental_date_columns": "ARRECEIPTMETHODLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_002_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_003_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_EGP_SYSTEM_ITEMS_B",
+              "raw_table": "helix_fin_ms_raw_sit.MS_EGP_SYSTEM_ITEMS_B",
+              "primary_key_columns": "ITEMBASEPEOINVENTORYITEMID,ITEMBASEPEOORGANIZATIONID",
+              "incremental_date_columns": "ITEMBASEPEOLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_003_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_004_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_FND_LOOKUP_VALUES_B",
+              "raw_table": "helix_fin_ms_raw_sit.MS_FND_LOOKUP_VALUES_B",
+              "primary_key_columns": "LOOKUPCODE,LOOKUPTYPE,SETID,VIEWAPPLICATIONID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_004_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_005_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_FND_LOOKUP_VALUES_TL",
+              "raw_table": "helix_fin_ms_raw_sit.MS_FND_LOOKUP_VALUES_TL",
+              "primary_key_columns": "LANGUAGE,LOOKUPCODE,LOOKUPTYPE,SETID,VIEWAPPLICATIONID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_005_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_006_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_FND_SETID_ASSIGNMENTS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_FND_SETID_ASSIGNMENTS",
+              "primary_key_columns": "DETERMINANTTYPE,DETERMINANTVALUE,ENTERPRISEID,REFERENCEGROUPNAME",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_006_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_007_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_FND_SETID_SETS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_FND_SETID_SETS",
+              "primary_key_columns": "LANGUAGE,SETID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_007_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_008_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_FND_TERRITORIES_TL",
+              "raw_table": "helix_fin_ms_raw_sit.MS_FND_TERRITORIES_TL",
+              "primary_key_columns": "LANGUAGE,TERRITORYCODE",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_008_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_009_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUSTOMER_PROFILES_F",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUSTOMER_PROFILES_F",
+              "primary_key_columns": "HZCUSTPROFILEFCUSTACCOUNTPROFILEID,HZCUSTPROFILEFEFFECTIVEENDDATE,HZCUSTPROFILEFEFFECTIVESTARTDATE",
+              "incremental_date_columns": "HZCUSTPROFILEFLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_009_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_010_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_ACCOUNTS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUST_ACCOUNTS",
+              "primary_key_columns": "CUSTACCOUNTID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_010_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_011_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_ACCOUNT_ROLES",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUST_ACCOUNT_ROLES",
+              "primary_key_columns": "CUSTACCOUNTROLEID",
+              "incremental_date_columns": "CONTACTPERSONPARTYLASTUPDATEDATE,CUSTOMERACCOUNTCONTACTLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_011_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_012_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_PROFILE_AMTS_F",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUST_PROFILE_AMTS_F",
+              "primary_key_columns": "HZCUSTPROFILEAMTSFCUSTACCTPROFILEAMTID,HZCUSTPROFILEAMTSFEFFECTIVEENDDATE,HZCUSTPROFILEAMTSFEFFECTIVESTARTDATE",
+              "incremental_date_columns": "HZCUSTPROFILEAMTSFLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_012_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_013_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_PROFILE_CLASSES",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUST_PROFILE_CLASSES",
+              "primary_key_columns": "HZCUSTPROFILECLASSPROFILECLASSID",
+              "incremental_date_columns": "HZCUSTPROFILECLASSLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_013_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_014_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_CUST_SITE_USES_ALL",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_CUST_SITE_USES_ALL",
+              "primary_key_columns": "LOCATIONID,PARTYSITEID,SITEUSEID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_014_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_015_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_LOCATIONS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_LOCATIONS",
+              "primary_key_columns": "LOCATIONID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_015_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_016_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_PARTY_SITES",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_PARTY_SITES",
+              "primary_key_columns": "PARTYSITEID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_016_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_017_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_HZ_PARTY_USG_ASSIGNMENTS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_HZ_PARTY_USG_ASSIGNMENTS",
+              "primary_key_columns": "PARTYUSGASSIGNMENTID",
+              "incremental_date_columns": "PARTYASSIGNMENTLASTUPDATEDATE,PARTYEOLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_017_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_018_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_INV_ORG_PARAMETERS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_INV_ORG_PARAMETERS",
+              "primary_key_columns": "ORGANIZATIONID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_018_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_019_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_PER_EMAIL_ADDRESSES",
+              "raw_table": "helix_fin_ms_raw_sit.MS_PER_EMAIL_ADDRESSES",
+              "primary_key_columns": "EMAILADDRESSID",
+              "incremental_date_columns": "EMAILADDRESSESPEOLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_019_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_020_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_RA_CUST_RECEIPT_METHODS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_RA_CUST_RECEIPT_METHODS",
+              "primary_key_columns": "RACUSTRECEIPTMETHODCUSTRECEIPTMETHODID",
+              "incremental_date_columns": "RACUSTRECEIPTMETHODLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_020_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_021_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_RA_TERMS_TL",
+              "raw_table": "helix_fin_ms_raw_sit.MS_RA_TERMS_TL",
+              "primary_key_columns": "LANGUAGE,TERMID",
+              "incremental_date_columns": "LASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_021_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_022_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_XLE_ENTITY_PROFILES",
+              "raw_table": "helix_fin_ms_raw_sit.MS_XLE_ENTITY_PROFILES",
+              "primary_key_columns": "LEGALENTITYLEGALENTITYID",
+              "incremental_date_columns": "LEGALENTITYLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_022_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_023_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_XLE_REGISTRATIONS",
+              "raw_table": "helix_fin_ms_raw_sit.MS_XLE_REGISTRATIONS",
+              "primary_key_columns": "REGISTRATIONREGISTRATIONID",
+              "incremental_date_columns": "REGISTRATIONLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_023_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_024_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_EGP_CATEGORIES_B",
+              "raw_table": "helix_fin_ms_raw_sit.MS_EGP_CATEGORIES_B",
+              "primary_key_columns": "CATEGORYBASEPEOCATEGORYID",
+              "incremental_date_columns": "CATEGORYBASEPEOLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_024_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "MS_025_MERGE",
+            "template_reference": "FUSION-SOFT-DEL-MERGE-1",
+            "task_type": "MERGE",
+            "config": {
+              "stg_table": "helix_fin_ms_stg_sit.STG_DEL_MS_PER_ALL_PEOPLE_F",
+              "raw_table": "helix_fin_ms_raw_sit.MS_PER_ALL_PEOPLE_F",
+              "primary_key_columns": "PERSONID",
+              "incremental_date_columns": "EFFECTIVESTARTDATE,PERSONDETAILSPEOLASTUPDATEDATE"
+            },
+            "upstream_tasks": [
+              "MS_025_STG_LOAD"
+            ],
+            "downstream_tasks": [
+              "ARCHIVE_FILES"
+            ]
+          },
+          {
+            "task_name": "ARCHIVE_FILES",
+            "task_type": "EXECUTION",
+            "template_reference": "GCS_TO_GCS_ARCHIVE",
+            "config": {}
+          }
+      ]
+    },
+    "template_config": {
+      "merge_templates": [
+        {
+          "template_id": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "merge_type": "MERGE_UPDATE",
+          "config": {
+            "primary_key_columns": "",
+            "incremental_date_columns": "",
+            "truncate_stg_table": "True"
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "FUSION-SOFT-DEL-MERGE-1",
+          "merge_type": "UPDATE_SD_ALL_PK",
+          "config": {
+            "primary_key_columns": "",
+            "incremental_date_columns": ""
+          },
+          "lag_minutes": 0
+        }
+      ],
+      "execution_templates": [
+        {
+          "template_id": "FUSION_UCM2GCS",
+          "execution_type": "DATAFLOW",
+          "config":
+          {
+            "dataflow_template_location": "gs://eqx-helix-fusion-dev/templates/fusiontogcp_dev_integrated_version_2.json",
+            "parameters":
+            {
+              "projectId": "it-helix-platform-dev",
+              "bucketName": "helix-fin-oc-ms-dev",
+              "inboundFolderPath": "ms_del_inbound",
+              "currentFolderPath": "current_run_ms_del",
+              "currentFolderDecryptedPath":"Decrypted_Folder_gpg_ms_del",
+              "processedFolderPath": "ms_del_processed",
+              "jsonToCsvFolderPath": "ms_del_inbound/metadata_json",
+              "metadataToCsvFolderPath": "ms_del_inbound/metadata_table",
+              "controlScheduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+              "soapEndPointUrl": "https://fa-etfl-dev11-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+              "soapAction": "soapAction for the pipeline",
+              "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+              "soapUcm": "http://www.oracle.com/UCM",
+              "username": "eqx_helix",
+              "secret": "oracle-fusion-dev11-password",
+              "bipFiles":"NOFILE",
+              "incrementalBipFiles": "NOFILE",
+              "biccScheduleNames": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('helix_fin_ms_pk_extract_schedule_sit' ) ",
+              "bipDagRunId": "{{ get_audit_param('dag_run_id') }}",
+              "bipLastRunTime":"{{ get_audit_param('from_delta_key') }}",
+              "currentTime":"{{ get_audit_param('to_delta_key') }}",
+              "pgpSecretIdForPublicKey": "oracle-dev7-publickey",
+              "pgpSecretIdForPrivateKey": "oracle-dev7-privatekey",
+              "pgpSecretIdForPassphrase": "oracle-dev7-passphrase"
+            },
+            "environment": {
+              "tempLocation": "gs://helix-fin-oc-ms-dev/dataflow/temp/fusion_ucm2gcs/",
+              "stagingLocation": "gs://helix-fin-oc-ms-dev/dataflow/staging/fusion_ucm2gcs/",
+              "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+              "network": "eqx-nonprod",
+              "numWorkers": 10,
+              "maxWorkers": 100
+            }
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "FUSION_GCS2BQ_UCM",
+          "execution_type": "GCS_TO_BQ",
+          "config": {
+            "source_format": "CSV",
+            "skip_leading_rows": "1",
+            "autodetect": "False",
+            "write_disposition": "WRITE_APPEND",
+            "allow_quoted_newlines": "True",
+            "retries": "0"
+          }
+        },
+        {
+            "template_id": "FUSION_GCS2BQ",
+            "execution_type": "GCS_TO_BQ",
+            "config": {
+              "source_format": "CSV",
+              "skip_leading_rows": "1",
+              "autodetect": "False",
+              "write_disposition": "WRITE_TRUNCATE",
+              "allow_quoted_newlines": "True",
+              "retries": "0"
+            }
+        },
+        {
+          "template_id": "SQL_DW_PROC_1",
+          "execution_type": "SQL",
+          "config": {
+            "sql_statement_type": "MULTI_STATEMENT"
+          },
+          "lag_minutes": 0
+        },
+        {
+            "template_id": "DAG_TRIGGER_TEMPLATE",
+            "execution_type": "TRIGGER_DAG",
+            "config": {},
+            "lag_minutes": 0
+        },
+        {
+          "template_id": "EXASOL_SYNC_DAG_TRIGGER",
+          "execution_type": "TRIGGER_DAG",
+          "config": {
+            "trigger_dag_id": "bigquery_exasol_sync",
+            "wait_for_completion": false,
+            "parameters": {
+              "batch_name": "AR_BQ_TO_EXASOL_SYNC",
+              "etl_proc_wid": "{{ get_audit_param('dag_run_id') }}"
+            }
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "GCS_TO_GCS_ARCHIVE",
+          "execution_type": "GCS_TO_GCS",
+          "config": {
+            "source_bucket": "helix-fin-oc-ms-dev",
+            "source_objects": [
+              "ms_del_inbound/*"
+            ],
+            "destination_bucket": "helix-fin-oc-ms-dev",
+            "destination_object": "ms_del_archive/{{ get_audit_param('dag_run_id') }}/",
+            "move_object": true
+          },
+          "lag_minutes": 0
+        }
+      ]
+    }
+  }

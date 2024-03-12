@@ -1,0 +1,112 @@
+{
+  "dag_config": {
+    "dag_id": "fusion_archival_test",
+    "owner": "Helix Platform Team",
+    "start_date": "2023-05-23",
+    "schedule_interval": null,
+    "time_zone": "Asia/Bangkok",
+    "depends_on_past": false,
+    "retries": 0,
+    "retry_delay": 60,
+    "email": [
+      "vmadhavan@equinix.com",
+      "aayushi@equinix.com"
+    ],
+    "email_on_failure": true,
+    "email_on_retry": false,
+    "sla": 60,
+    "tags": [
+      "fusion-ingestion-orchfw"
+    ],
+    "tags_for_batch_holds": [
+      "FUSION-AR",
+      "FUSION-ALL"
+    ]
+  },
+  "task_config": {
+    "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+    "data_project_id": "helix-data-dev",
+    "tasks": [
+      {
+        "task_name": "ARCHIVE_FILES_CLOUD_FUNC",
+        "task_type": "EXECUTION",
+        "template_reference": "FILE-ARCHIVIAL-CLOUD-FUNCTION",
+        "config": {
+
+        }
+      },
+      {
+        "task_name": "ARCHIVE_FILES_OPERATOR",
+        "task_type": "EXECUTION",
+        "template_reference": "GCS_TO_GCS_ARCHIVE",
+        "config": {
+
+        }
+      },
+      {
+        "task_name": "SQL_EXEC_SINGLE_2",
+        "task_type": "EXECUTION",
+        "template_reference": "SQL_DW_PROC_2",
+        "config": {
+          "sql_statement_filepath": "/home/airflow/gcs/dags/helix-orchestrator/app_sql/fusion/test_sql_single.sql",
+          "parameters": "etl_proc_wid,10001,INTEGER"
+        },
+        "upstream_tasks": [
+          "ARCHIVE_FILES_OPERATOR"
+        ]
+      }
+    ]
+  },
+  "template_config": {
+    "execution_templates": [
+      {
+        "template_id": "FILE-ARCHIVIAL-CLOUD-FUNCTION",
+        "execution_type": "AUTHENTICATED_CLOUD_FUNCTION",
+        "config": {
+          "method": "POST",
+          "url": "https://us-west1-it-helix-platform-dev.cloudfunctions.net/GcsToGcsTransfer",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "source_bucket": "helix-finance-test",
+            "source_object": "inbound_ar/*",
+            "destination_bucket": "helix-finance-test",
+            "destination_object": "archive_ar/",
+            "move_object": "true",
+            "replace": "true"
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "SQL_DW_PROC_1",
+        "execution_type": "SQL",
+        "config": {
+          "sql_statement_type": "MULTI_STATEMENT"
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "SQL_DW_PROC_2",
+        "execution_type": "SQL",
+        "config": {
+          "sql_statement_type": "SINGLE_STATEMENT"
+        },
+        "lag_minutes": 0
+      },
+       {
+        "template_id": "GCS_TO_GCS_ARCHIVE",
+        "execution_type": "GCS_TO_GCS",
+        "config": {
+          "source_bucket":"helix-finance-test",
+          "source_objects":["inbound_ar/*"],
+          "destination_bucket":"helix-finance-test",
+          "destination_object":"archive_ar/",
+          "move_object":true
+        },
+        "lag_minutes": 0
+      }
+    ]
+  }
+}

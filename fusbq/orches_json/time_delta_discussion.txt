@@ -1,0 +1,27 @@
+
+1st run-----------------------------------------
+
+dag_start_time 10:00
+
+	task starts: 10:10
+	task complets : 10:15
+	raw
+	dw-sil,plp > last_run_start_time
+	
+dag complete : 10:30
+
+
+
+2nd run----------------------------------------
+
+delta_Start 10:00
+delta_end : 12:00
+
+dag_start_time : 12:00
+
+
+
+dag_end_time : 02:00
+
+
+	

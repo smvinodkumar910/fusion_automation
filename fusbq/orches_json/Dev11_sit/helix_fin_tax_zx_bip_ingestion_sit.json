@@ -1,0 +1,349 @@
+{
+  "dag_config": {
+    "dag_id": "helix_fin_tax_zx_bip_ingestion_sit",
+    "owner": "IT-Finance-Analytics-Dev-Team",
+    "start_date": "2023-05-30",
+    "schedule_interval": null,
+    "time_zone": "Asia/Bangkok",
+    "depends_on_past": false,
+    "retries": 2,
+    "retry_delay": 60,
+    "email": [
+      "IT-Finance-Analytics-Dev@equinix.com"
+    ],
+    "email_on_failure": true,
+    "email_on_retry": false,
+    "sla": 60,
+    "tags": [
+      "fusion-ingestion-orchfw"
+    ],
+    "tags_for_batch_holds": [
+      "FUSION-MS",
+      "FUSION-ALL"
+    ],
+    "framework_version": "v1.0"
+  },
+  "task_config": {
+    "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+    "data_project_id": "helix-data-dev",
+    "tasks": [
+      {
+        "task_name": "UCM_TO_GCS",
+        "task_type": "EXECUTION",
+        "template_reference": "FUSION_UCM2GCS",
+        "config": {
+            "parameters": {},
+            "environment": {}
+        }
+    },
+    {
+        "task_name": "LOAD_UCM_FILE_EXTRACT",
+        "template_reference": "FUSION_GCS2BQ_UCM",
+        "task_type": "EXECUTION",
+        "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": "zx_bip_inbound/metadata_table/*",
+            "schema_object": "fusion_schema/BICC_UCM_FILE_EXTRACT.json",
+            "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_FILE_EXTRACT"
+        },
+        "upstream_tasks": [
+            "UCM_TO_GCS"
+        ]
+    },
+    {
+        "task_name": "LOAD_UCM_JSON_DETAIL",
+        "template_reference": "FUSION_GCS2BQ_UCM",
+        "task_type": "EXECUTION",
+        "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": "zx_bip_inbound/metadata_json/*",
+            "schema_object": "fusion_schema/BICC_UCM_JSON_DETAILS.json",
+            "destination_project_dataset_table": "helix-data-dev.BQ_DM.BICC_UCM_JSON_DETAILS"
+        },
+        "upstream_tasks": [
+            "UCM_TO_GCS"
+        ]
+        },
+        {
+          "task_name": "ZX_BIP_001_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": [
+              "zx_bip_inbound/ZX_ACCOUNTS*.csv"
+            ],
+            "schema_object": "fusion_schema/STG_ZX_ACCOUNTS_BIP.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_fin_tax_stg_sit.STG_ZX_ACCOUNTS_BIP"
+          },
+          "upstream_tasks": [
+            "LOAD_UCM_FILE_EXTRACT",
+            "LOAD_UCM_JSON_DETAIL"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_002_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": [
+              "zx_bip_inbound/ZX_LINES_DET_FACTORS*.csv"
+            ],
+            "schema_object": "fusion_schema/STG_ZX_LINES_DET_FACTORS_BIP.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_fin_tax_stg_sit.STG_ZX_LINES_DET_FACTORS_BIP"
+          },
+          "upstream_tasks": [
+            "LOAD_UCM_FILE_EXTRACT",
+            "LOAD_UCM_JSON_DETAIL"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_003_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": [
+              "zx_bip_inbound/ZX_PARTY_TAX_PROFILE*.csv"
+            ],
+            "schema_object": "fusion_schema/STG_ZX_PARTY_TAX_PROFILE_BIP.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_fin_tax_stg_sit.STG_ZX_PARTY_TAX_PROFILE_BIP"
+          },
+          "upstream_tasks": [
+            "LOAD_UCM_FILE_EXTRACT",
+            "LOAD_UCM_JSON_DETAIL"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_004_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-fin-oc-tax-dev",
+            "source_objects": [
+              "zx_bip_inbound/ZX_REC_NREC_DIST*.csv"
+            ],
+            "schema_object": "fusion_schema/STG_ZX_REC_NREC_DIST_BIP.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_fin_tax_stg_sit.STG_ZX_REC_NREC_DIST_BIP"
+          },
+          "upstream_tasks": [
+            "LOAD_UCM_FILE_EXTRACT",
+            "LOAD_UCM_JSON_DETAIL"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_001_MERGE",
+          "template_reference": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_fin_tax_stg_sit.STG_ZX_ACCOUNTS_BIP",
+            "dl_table": "helix_fin_tax_dl_sit.DL_ZX_ACCOUNTS_BIP",
+            "raw_table": "helix_fin_tax_raw_sit.ZX_ACCOUNTS_BIP",
+            "primary_key_columns": "TAX_ACCOUNT_ID",
+            "incremental_date_columns": "LAST_UPDATE_DATE"
+          },
+          "upstream_tasks": [
+            "ZX_BIP_001_STG_LOAD"
+          ],
+          "downstream_tasks": [
+            "ARCHIVE_FILES"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_002_MERGE",
+          "template_reference": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_fin_tax_stg_sit.STG_ZX_LINES_DET_FACTORS_BIP",
+            "dl_table": "helix_fin_tax_dl_sit.DL_ZX_LINES_DET_FACTORS_BIP",
+            "raw_table": "helix_fin_tax_raw_sit.ZX_LINES_DET_FACTORS_BIP",
+            "primary_key_columns": "LINES_DET_FACTOR_ID",
+            "incremental_date_columns": "LAST_UPDATE_DATE"
+          },
+          "upstream_tasks": [
+            "ZX_BIP_002_STG_LOAD"
+          ],
+          "downstream_tasks": [
+            "ARCHIVE_FILES"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_003_MERGE",
+          "template_reference": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_fin_tax_stg_sit.STG_ZX_PARTY_TAX_PROFILE_BIP",
+            "dl_table": "helix_fin_tax_dl_sit.DL_ZX_PARTY_TAX_PROFILE_BIP",
+            "raw_table": "helix_fin_tax_raw_sit.ZX_PARTY_TAX_PROFILE_BIP",
+            "primary_key_columns": "PARTY_TAX_PROFILE_ID",
+            "incremental_date_columns": "LAST_UPDATE_DATE"
+          },
+          "upstream_tasks": [
+            "ZX_BIP_003_STG_LOAD"
+          ],
+          "downstream_tasks": [
+            "ARCHIVE_FILES"
+          ]
+        },
+        {
+          "task_name": "ZX_BIP_004_MERGE",
+          "template_reference": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_fin_tax_stg_sit.STG_ZX_REC_NREC_DIST_BIP",
+            "dl_table": "helix_fin_tax_dl_sit.DL_ZX_REC_NREC_DIST_BIP",
+            "raw_table": "helix_fin_tax_raw_sit.ZX_REC_NREC_DIST_BIP",
+            "primary_key_columns": "REC_NREC_TAX_DIST_ID",
+            "incremental_date_columns": "LAST_UPDATE_DATE"
+          },
+          "upstream_tasks": [
+            "ZX_BIP_004_STG_LOAD"
+          ],
+          "downstream_tasks": [
+            "ARCHIVE_FILES"
+          ]
+        },
+        {
+          "task_name": "ARCHIVE_FILES",
+          "task_type": "EXECUTION",
+          "template_reference": "GCS_TO_GCS_ARCHIVE",
+          "config": {}
+        }
+    ]
+  },
+  "template_config": {
+    "merge_templates": [
+      {
+        "template_id": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+        "merge_type": "MERGE_UPDATE",
+        "config": {
+          "primary_key_columns": "",
+          "incremental_date_columns": "",
+          "truncate_stg_table": "True"
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "FUSION-SOFT-DEL-MERGE-1",
+        "merge_type": "UPDATE_SD_ALL_PK",
+        "config": {
+          "primary_key_columns": "",
+          "incremental_date_columns": ""
+        },
+        "lag_minutes": 0
+      }
+    ],
+    "execution_templates": [
+      {
+        "template_id": "FUSION_UCM2GCS",
+        "execution_type": "DATAFLOW",
+        "config":
+        {
+          "dataflow_template_location": "gs://eqx-helix-fusion-dev/templates/fusiontogcp_dev_integrated_version_2.json",
+          "parameters":
+          {
+            "projectId": "it-helix-platform-dev",
+            "bucketName": "helix-fin-oc-tax-dev",
+            "inboundFolderPath": "zx_bip_inbound",
+            "currentFolderPath": "current_run_zx_bip",
+            "currentFolderDecryptedPath":"Decrypted_Folder_gpg_zx_bip",
+            "processedFolderPath": "zx_bip_processed",
+            "jsonToCsvFolderPath": "zx_bip_inbound/metadata_json",
+            "metadataToCsvFolderPath": "zx_bip_inbound/metadata_table",
+            "controlScheduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+            "soapEndPointUrl": "https://fa-etfl-dev11-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+            "soapAction": "soapAction for the pipeline",
+            "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+            "soapUcm": "http://www.oracle.com/UCM",
+            "username": "eqx_helix",
+            "secret": "oracle-fusion-dev11-password",
+            "bipFiles":"",
+            "incrementalBipFiles": "ZX_ACCOUNTS,ZX_LINES_DET_FACTORS,ZX_PARTY_TAX_PROFILE,ZX_REC_NREC_DIST",
+            "biccScheduleNames": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('helix_fin_tax_zx_data_ext_schedule_sit' ) ",
+            "bipDagRunId": "{{ get_audit_param('dag_run_id') }}",
+            "bipLastRunTime":"{{ get_audit_param('from_delta_key') }}",
+            "currentTime":"{{ get_audit_param('to_delta_key') }}",
+            "pgpSecretIdForPublicKey": "oracle-dev7-publickey",
+            "pgpSecretIdForPrivateKey": "oracle-dev7-privatekey",
+            "pgpSecretIdForPassphrase": "oracle-dev7-passphrase"
+          },
+          "environment": {
+            "tempLocation": "gs://helix-fin-oc-tax-dev/dataflow/temp/fusion_ucm2gcs/",
+            "stagingLocation": "gs://helix-fin-oc-tax-dev/dataflow/staging/fusion_ucm2gcs/",
+            "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+            "network": "eqx-nonprod",
+            "numWorkers": 10,
+            "maxWorkers": 100
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "FUSION_GCS2BQ_UCM",
+        "execution_type": "GCS_TO_BQ",
+        "config": {
+          "source_format": "CSV",
+          "skip_leading_rows": "1",
+          "autodetect": "False",
+          "write_disposition": "WRITE_APPEND",
+          "allow_quoted_newlines": "True",
+          "retries": "0"
+        }
+      },
+      {
+          "template_id": "FUSION_GCS2BQ",
+          "execution_type": "GCS_TO_BQ",
+          "config": {
+            "source_format": "CSV",
+            "skip_leading_rows": "1",
+            "autodetect": "False",
+            "write_disposition": "WRITE_TRUNCATE",
+            "allow_quoted_newlines": "True",
+            "retries": "0"
+          }
+      },
+      {
+        "template_id": "SQL_DW_PROC_1",
+        "execution_type": "SQL",
+        "config": {
+          "sql_statement_type": "MULTI_STATEMENT"
+        },
+        "lag_minutes": 0
+      },
+      {
+          "template_id": "DAG_TRIGGER_TEMPLATE",
+          "execution_type": "TRIGGER_DAG",
+          "config": {},
+          "lag_minutes": 0
+      },
+      {
+        "template_id": "EXASOL_SYNC_DAG_TRIGGER",
+        "execution_type": "TRIGGER_DAG",
+        "config": {
+          "trigger_dag_id": "bigquery_exasol_sync",
+          "wait_for_completion": false,
+          "parameters": {
+            "batch_name": "AR_BQ_TO_EXASOL_SYNC",
+            "etl_proc_wid": "{{ get_audit_param('dag_run_id') }}"
+          }
+        },
+        "lag_minutes": 0
+      },
+      {
+        "template_id": "GCS_TO_GCS_ARCHIVE",
+        "execution_type": "GCS_TO_GCS",
+        "config": {
+          "source_bucket": "helix-fin-oc-tax-dev",
+          "source_objects": [
+            "zx_bip_inbound/*"
+          ],
+          "destination_bucket": "helix-fin-oc-tax-dev",
+          "destination_object": "zx_bip_archive/{{ get_audit_param('dag_run_id') }}/",
+          "move_object": true
+        },
+        "lag_minutes": 0
+      }
+    ]
+  }
+}

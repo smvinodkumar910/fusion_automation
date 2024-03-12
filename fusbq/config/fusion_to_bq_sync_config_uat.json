@@ -1,0 +1,96 @@
+{
+  "environment": "helix-platform-composer-uat01",
+  "pipeline-configurations": [
+    {
+      "pipeline-name": "fusion_finance_analytics_gl_without_java.py",
+      "task-configurations": {
+        "bucketName": "helix-finance-uat",
+        "flex_template_bucket": "eqx-helix-fusion-uat",
+        "region": "us-west1",
+        "platformProjectId": "it-helix-platform-uat",
+        "inboundFolderPath": "inbound_gl",
+        "processedFolderPath": "processed_gl",
+        "jsonToCsvFolderPath": "inbound_gl/metadata_json",
+        "metadataToCsvFolderPath": "inbound_gl/metadata_table",
+        "controlSchduleTableName": "helix-data-uat.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+        "soapEndPointUrl": "'https://fa-etfl-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+        "soapAction": "soapAction for the pipeline",
+        "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+        "soapUcm": "http://www.oracle.com/UCM",
+        "username": "eqx_helix",
+        "secret": "oracle-fusion-prod-password",
+        "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-it-helix-platform-uat",
+        "dataset_name": "BQ_CTL_METADATA",
+        "control_login": "BQ_CTL_PROC_LOGGING",
+        "bq_dm_dataset_name": "BQ_DM",
+        "bq_stg_dataset_name": "helix_stg",
+        "fusion_schema": "fusion_schema",
+        "dataProjectId": "helix-data-uat",
+        "bip_files": "BIP_EXTRACT_GL_DAILY_RATES_REPORT",
+        "bicc_schedule_names": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('EQX_GL_ALL_EXTRACT_SCHEDULE' ) ",
+        "archive_path": "archive_gl",
+        "schedule_name" : "EQX_GL_ALL_EXTRACT_SCHEDULE"
+      }
+    },
+    {
+      "pipeline-name": "fusion_finance_analytics_gl_soft_del_without_java.py",
+      "task-configurations": {
+        "bucketName": "helix-finance-uat",
+        "flex_template_bucket": "eqx-helix-fusion-uat",
+        "region": "us-west1",
+        "platformProjectId": "it-helix-platform-uat",
+        "inboundFolderPath": "inbound_gl",
+        "processedFolderPath": "processed_gl",
+        "jsonToCsvFolderPath": "inbound_gl/metadata_json",
+        "metadataToCsvFolderPath": "inbound_gl/metadata_table",
+        "controlSchduleTableName": "helix-data-uat.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+        "soapEndPointUrl": "'https://fa-etfl-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+        "soapAction": "soapAction for the pipeline",
+        "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+        "soapUcm": "http://www.oracle.com/UCM",
+        "username": "eqx_helix",
+        "secret": "oracle-fusion-prod-password",
+        "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-it-helix-platform-uat",
+        "dataset_name": "BQ_CTL_METADATA",
+        "control_login": "BQ_CTL_PROC_LOGGING",
+        "bq_dm_dataset_name": "BQ_DM",
+        "bq_stg_dataset_name": "helix_stg",
+        "fusion_schema": "fusion_schema",
+        "dataProjectId": "helix-data-uat",
+        "bip_files": "BIP_EXTRACT_GL_DAILY_RATES_REPORT",
+        "bicc_schedule_names": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('EQX_GL_ALL_PK_EXTRACT_SCHEDULE' ) ",
+        "archive_path": "archive_gl",
+        "schedule_name" : "EQX_GL_ALL_PK_EXTRACT_SCHEDULE"
+      }
+    }
+  ],
+  "helix-automation": {
+      "pipeline-name": "fusion_automation.py",
+        "project_name": "it-helix-platform-uat",
+        "data_project_name": "helix-data-uat" ,
+        "bucket_name": "helix-finance-uat",
+        "pvo_list_path": "gs://helix-finance-uat/helix_automation_resource/pvos_list.csv",
+        "base_file_path": "gs://helix-finance-uat/helix_automation_resource/BASE_PVOS.csv",
+        "bicc_file_path": "gs://helix-finance-uat/helix_automation_resource/BICC_FSCM_Database_Mapping_with_ViewObjects.csv",
+        "ddl_target_path": "helix_automation_output/",
+        "STG_SCHEMA": "helix_stg",
+        "RAW_SCHEMA": "helix_raw",
+        "DW_SCHEMA": "helix_dw",
+        "HIST_SCHEMA": "helix_stg",
+        "temp_path": "tempfiles/",
+        "rest_api_url" : "https://fa-etfl-saasfaprod1.fa.ocs.oraclecloud.com/biacm/rest",
+        "rest_api_user": "eqx_helix",
+        "rest_api_secret" : "oracle-fusion-prod-password",
+        "meta_dataset_name" : "BQ_CTL_METADATA",
+        "fusion_schema": "fusion_schema",
+        "pvo_meta_path": "gs://helix-finance-test/pvo_metadata/"
+  },
+  "configuration": {
+    "labels": {
+      "cost_center": "helix-finance",
+      "point_of_contacts": ["vmadhavan","aayushi"],
+      "custom_label": "fusion_to_bq_sync",
+      "team": "it-finance-analytics-dev"
+    }
+  }
+}

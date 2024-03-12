@@ -1,0 +1,1459 @@
+{
+    "dag_config":
+    {
+        "dag_id": "fusion_ar_ingestion_all",
+        "owner": "Helix Platform Team",
+        "start_date": "2022-09-28",
+        "schedule_interval": null,
+        "time_zone": "Asia/Bangkok",
+        "depends_on_past": false,
+        "retries": 0,
+        "retry_delay": 60,
+        "email":
+        [
+            "vmadhavan@equinix.com",
+            "aayushi@equinix.com"
+        ],
+        "email_on_failure": true,
+        "email_on_retry": false,
+        "sla": 60,
+        "tags":
+        [
+            "fusion-ingestion-orchfw"
+        ],
+        "tags_for_batch_holds":
+        [
+            "FUSION-AR",
+            "FUSION-ALL"
+        ]
+    },
+    "task_config":
+    {
+        "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+        "data_project_id": "helix-data-dev",
+        "tasks": [
+        {
+          "task_name": "AR_001_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_adjustmentapprovalactionhistoryextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_APPROVAL_ACTION_HISTORY.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_APPROVAL_ACTION_HISTORY"
+          }
+        },
+        {
+          "task_name": "AR_002_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_adjustmentextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_ADJUSTMENTS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_ADJUSTMENTS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_003_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_applicationrulesetextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_APP_RULE_SETS.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_APP_RULE_SETS"
+          }
+        },
+        {
+          "task_name": "AR_004_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_autocashhierarchyextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_AUTOCASH_HIERARCHIES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_AUTOCASH_HIERARCHIES"
+          }
+        },
+        {
+          "task_name": "AR_005_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_automatchruleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_AUTOMATCH_RULES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_AUTOMATCH_RULES"
+          }
+        },
+        {
+          "task_name": "AR_006_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_cashremitrefextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CASH_REMIT_REFS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CASH_REMIT_REFS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_007_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_chargescheduleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CHARGE_SCHEDULES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CHARGE_SCHEDULES"
+          }
+        },
+        {
+          "task_name": "AR_008_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_chargeschedulehdrextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CHARGE_SCHEDULE_HDRS.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CHARGE_SCHEDULE_HDRS"
+          }
+        },
+        {
+          "task_name": "AR_009_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_chargeschedulelineextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CHARGE_SCHEDULE_LINES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CHARGE_SCHEDULE_LINES"
+          }
+        },
+        {
+          "task_name": "AR_010_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_consolidatedbillextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CONS_INV_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CONS_INV_ALL"
+          }
+        },
+        {
+          "task_name": "AR_011_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_custfinancialprofiledextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_HZ_CUST_PROFILE_AMTS_F.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_HZ_CUST_PROFILE_AMTS_F"
+          }
+        },
+        {
+          "task_name": "AR_012_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_custprofileextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_HZ_CUSTOMER_PROFILES_F.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_HZ_CUSTOMER_PROFILES_F"
+          }
+        },
+        {
+          "task_name": "AR_013_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_customerprofileclassextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_HZ_CUST_PROFILE_CLASSES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_HZ_CUST_PROFILE_CLASSES"
+          }
+        },
+        {
+          "task_name": "AR_014_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_customerreceiptmethodextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_CUST_RECEIPT_METHODS.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_CUST_RECEIPT_METHODS"
+          }
+        },
+        {
+          "task_name": "AR_015_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_distributionextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_DISTRIBUTIONS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_DISTRIBUTIONS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_016_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_distributionruleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_RULES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_RULES"
+          }
+        },
+        {
+          "task_name": "AR_017_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_distributionsetextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_DISTRIBUTION_SETS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_DISTRIBUTION_SETS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_018_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_exceptionruleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_APP_EXCEPTION_RULES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_APP_EXCEPTION_RULES"
+          }
+        },
+        {
+          "task_name": "AR_019_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_interestheaderextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_INTEREST_HEADERS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_INTEREST_HEADERS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_020_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_interestlineextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_INTEREST_LINES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_INTEREST_LINES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_021_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_memolineextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_MEMO_LINES_ALL_B.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_MEMO_LINES_ALL_B"
+          }
+        },
+        {
+          "task_name": "AR_022_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_memolinetlextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_MEMO_LINES_ALL_TL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_MEMO_LINES_ALL_TL"
+          }
+        },
+        {
+          "task_name": "AR_023_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_miscellaneousreceiptdistributionextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_MISC_CASH_DISTRIBUTIONS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_MISC_CASH_DISTRIBUTIONS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_024_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_paymentscheduleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_PAYMENT_SCHEDULES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_PAYMENT_SCHEDULES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_025_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_paymenttermextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_TERMS_B.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_TERMS_B"
+          }
+        },
+        {
+          "task_name": "AR_026_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_paymenttermlineextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_TERMS_LINES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_TERMS_LINES"
+          }
+        },
+        {
+          "task_name": "AR_027_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_paymenttermtlextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_TERMS_TL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_TERMS_TL"
+          }
+        },
+        {
+          "task_name": "AR_028_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receiptbatchextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_BATCHES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_BATCHES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_029_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receiptheaderextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CASH_RECEIPTS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CASH_RECEIPTS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_030_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receipthistoryextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_CASH_RECEIPT_HISTORY_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_CASH_RECEIPT_HISTORY_ALL"
+          }
+        },
+        {
+          "task_name": "AR_031_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receiptmethodaccountextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_RECEIPT_METHOD_ACCOUNTS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_RECEIPT_METHOD_ACCOUNTS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_032_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receiptmethodextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_RECEIPT_METHODS.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_RECEIPT_METHODS"
+          }
+        },
+        {
+          "task_name": "AR_033_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receivableactivityextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_RECEIVABLES_TRX_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_RECEIVABLES_TRX_ALL"
+          }
+        },
+        {
+          "task_name": "AR_034_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_receivableapplicationextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_RECEIVABLE_APPLICATIONS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_RECEIVABLE_APPLICATIONS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_035_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_referenceaccountextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_REF_ACCOUNTS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_REF_ACCOUNTS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_036_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_remittoaddressextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_REMIT_TOS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_REMIT_TOS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_037_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_remittolocationextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_REMIT_TO_LOCS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_REMIT_TO_LOCS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_038_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_revenueadjustmentextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_REVENUE_ADJUSTMENTS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_REVENUE_ADJUSTMENTS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_039_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_salescredittypeextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_SALES_CREDIT_TYPES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_SALES_CREDIT_TYPES"
+          }
+        },
+        {
+          "task_name": "AR_040_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_standardtexttranslationextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_STANDARD_TEXT_TL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_STANDARD_TEXT_TL"
+          }
+        },
+        {
+          "task_name": "AR_041_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_statementcycleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_STATEMENT_CYCLES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_STATEMENT_CYCLES"
+          }
+        },
+        {
+          "task_name": "AR_042_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_sysparameterextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_SYSTEM_PARAMETERS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_SYSTEM_PARAMETERS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_043_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionbatchextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_BATCHES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_BATCHES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_044_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionbatchsourceextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_BATCH_SOURCES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_BATCH_SOURCES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_045_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactiondistributionextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_CUST_TRX_LINE_GL_DIST_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_CUST_TRX_LINE_GL_DIST_ALL"
+          }
+        },
+        {
+          "task_name": "AR_046_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionheaderextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_CUSTOMER_TRX_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_CUSTOMER_TRX_ALL"
+          }
+        },
+        {
+          "task_name": "AR_047_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionlineextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_CUSTOMER_TRX_LINES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_CUSTOMER_TRX_LINES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_048_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionlinerevenuedeferralextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_DEFERRED_LINES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_DEFERRED_LINES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_049_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactionrequestgroupingruleextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_GROUPING_RULES.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_GROUPING_RULES"
+          }
+        },
+        {
+          "task_name": "AR_050_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transactiontypeextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_RA_CUST_TRX_TYPES_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_RA_CUST_TRX_TYPES_ALL"
+          }
+        },
+        {
+          "task_name": "AR_051_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transmissionextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_TRANSMISSIONS_ALL.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_TRANSMISSIONS_ALL"
+          }
+        },
+        {
+          "task_name": "AR_052_STG_LOAD",
+          "template_reference": "FUSION_GCS2BQ",
+          "task_type": "EXECUTION",
+          "config": {
+            "bucket": "helix-finance-test",
+            "source_objects": "gl_data_test/load_gl_test/uat_first_test_bring_all_oracle/archive_gl/file_fscmtopmodelam_finextractam_arbiccextractam_transmissionformatextractpvo*.csv",
+            "schema_object": "fusion_schema/STG_FUSION_AR_TRANSMISSION_FORMATS.json",
+            "destination_project_dataset_table": "helix-data-dev.helix_stg.STG_FUSION_AR_TRANSMISSION_FORMATS"
+          }
+        },
+        {
+          "task_name": "AR_001_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_APPROVAL_ACTION_HISTORY",
+            "dl_table": "helix_dl.DL_FUSION_AR_APPROVAL_ACTION_HISTORY",
+            "raw_table": "helix_raw.FUSION_AR_APPROVAL_ACTION_HISTORY",
+            "primary_key_columns": "ARAPPROVALACTIONHISTORYAPPROVALACTIONHISTORYID",
+            "incremental_date_columns": "ARAPPROVALACTIONHISTORYLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_001_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_002_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_ADJUSTMENTS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_ADJUSTMENTS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_ADJUSTMENTS_ALL",
+            "primary_key_columns": "ARADJUSTMENTADJUSTMENTID",
+            "incremental_date_columns": "ARADJUSTMENTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_002_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_003_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_APP_RULE_SETS",
+            "dl_table": "helix_dl.DL_FUSION_AR_APP_RULE_SETS",
+            "raw_table": "helix_raw.FUSION_AR_APP_RULE_SETS",
+            "primary_key_columns": "ARAPPRULESETRULESETID",
+            "incremental_date_columns": "ARAPPRULESETLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_003_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_004_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_AUTOCASH_HIERARCHIES",
+            "dl_table": "helix_dl.DL_FUSION_AR_AUTOCASH_HIERARCHIES",
+            "raw_table": "helix_raw.FUSION_AR_AUTOCASH_HIERARCHIES",
+            "primary_key_columns": "ARAUTOCASHHIERARCHYAUTOCASHHIERARCHYID",
+            "incremental_date_columns": "ARAUTOCASHHIERARCHYLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_004_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_005_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_AUTOMATCH_RULES",
+            "dl_table": "helix_dl.DL_FUSION_AR_AUTOMATCH_RULES",
+            "raw_table": "helix_raw.FUSION_AR_AUTOMATCH_RULES",
+            "primary_key_columns": "ARAUTOMATIONRULEAUTOMATCHRULEID",
+            "incremental_date_columns": "ARAUTOMATIONRULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_005_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_006_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CASH_REMIT_REFS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_CASH_REMIT_REFS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_CASH_REMIT_REFS_ALL",
+            "primary_key_columns": "ARCASHREMITREFREMITREFERENCEID",
+            "incremental_date_columns": "ARCASHREMITREFLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_006_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_007_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CHARGE_SCHEDULES",
+            "dl_table": "helix_dl.DL_FUSION_AR_CHARGE_SCHEDULES",
+            "raw_table": "helix_raw.FUSION_AR_CHARGE_SCHEDULES",
+            "primary_key_columns": "ARCHARGESCHEDULESCHEDULEID",
+            "incremental_date_columns": "ARCHARGESCHEDULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_007_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_008_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CHARGE_SCHEDULE_HDRS",
+            "dl_table": "helix_dl.DL_FUSION_AR_CHARGE_SCHEDULE_HDRS",
+            "raw_table": "helix_raw.FUSION_AR_CHARGE_SCHEDULE_HDRS",
+            "primary_key_columns": "ARCHARGESCHEDULEHDRSCHEDULEHEADERID,ARCHARGESCHEDULEHDRSCHEDULEID",
+            "incremental_date_columns": "ARCHARGESCHEDULEHDRLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_008_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_009_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CHARGE_SCHEDULE_LINES",
+            "dl_table": "helix_dl.DL_FUSION_AR_CHARGE_SCHEDULE_LINES",
+            "raw_table": "helix_raw.FUSION_AR_CHARGE_SCHEDULE_LINES",
+            "primary_key_columns": "ARCHARGESCHEDULELINESCHEDULELINEID",
+            "incremental_date_columns": "ARCHARGESCHEDULELINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_009_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_010_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CONS_INV_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_CONS_INV_ALL",
+            "raw_table": "helix_raw.FUSION_AR_CONS_INV_ALL",
+            "primary_key_columns": "ARCONSINVCONSINVID",
+            "incremental_date_columns": "ARCONSINVLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_010_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_011_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_HZ_CUST_PROFILE_AMTS_F",
+            "dl_table": "helix_dl.DL_FUSION_HZ_CUST_PROFILE_AMTS_F",
+            "raw_table": "helix_raw.FUSION_HZ_CUST_PROFILE_AMTS_F",
+            "primary_key_columns": "HZCUSTPROFILEAMTSFCUSTACCTPROFILEAMTID,HZCUSTPROFILEAMTSFEFFECTIVEENDDATE,HZCUSTPROFILEAMTSFEFFECTIVESTARTDATE",
+            "incremental_date_columns": "HZCUSTPROFILEAMTSFLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_011_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_012_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_HZ_CUSTOMER_PROFILES_F",
+            "dl_table": "helix_dl.DL_FUSION_HZ_CUSTOMER_PROFILES_F",
+            "raw_table": "helix_raw.FUSION_HZ_CUSTOMER_PROFILES_F",
+            "primary_key_columns": "HZCUSTPROFILEFCUSTACCOUNTPROFILEID,HZCUSTPROFILEFEFFECTIVEENDDATE,HZCUSTPROFILEFEFFECTIVESTARTDATE",
+            "incremental_date_columns": "HZCUSTPROFILEFLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_012_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_013_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_HZ_CUST_PROFILE_CLASSES",
+            "dl_table": "helix_dl.DL_FUSION_HZ_CUST_PROFILE_CLASSES",
+            "raw_table": "helix_raw.FUSION_HZ_CUST_PROFILE_CLASSES",
+            "primary_key_columns": "HZCUSTPROFILECLASSPROFILECLASSID",
+            "incremental_date_columns": "HZCUSTPROFILECLASSLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_013_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_014_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_CUST_RECEIPT_METHODS",
+            "dl_table": "helix_dl.DL_FUSION_RA_CUST_RECEIPT_METHODS",
+            "raw_table": "helix_raw.FUSION_RA_CUST_RECEIPT_METHODS",
+            "primary_key_columns": "RACUSTRECEIPTMETHODCUSTRECEIPTMETHODID",
+            "incremental_date_columns": "RACUSTRECEIPTMETHODLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_014_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_015_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_DISTRIBUTIONS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_DISTRIBUTIONS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_DISTRIBUTIONS_ALL",
+            "primary_key_columns": "ARDISTRIBUTIONLINEID",
+            "incremental_date_columns": "ARDISTRIBUTIONLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_015_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_016_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_RULES",
+            "dl_table": "helix_dl.DL_FUSION_RA_RULES",
+            "raw_table": "helix_raw.FUSION_RA_RULES",
+            "primary_key_columns": "DISTRIBUTIONRULERULEID",
+            "incremental_date_columns": "DISTRIBUTIONRULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_016_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_017_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_DISTRIBUTION_SETS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_DISTRIBUTION_SETS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_DISTRIBUTION_SETS_ALL",
+            "primary_key_columns": "ARDISTRIBUTIONSETDISTRIBUTIONSETID",
+            "incremental_date_columns": "ARDISTRIBUTIONSETLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_017_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_018_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_APP_EXCEPTION_RULES",
+            "dl_table": "helix_dl.DL_FUSION_AR_APP_EXCEPTION_RULES",
+            "raw_table": "helix_raw.FUSION_AR_APP_EXCEPTION_RULES",
+            "primary_key_columns": "ARAPPEXCEPTIONRULEEXCEPTIONRULEID",
+            "incremental_date_columns": "ARAPPEXCEPTIONRULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_018_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_019_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_INTEREST_HEADERS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_INTEREST_HEADERS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_INTEREST_HEADERS_ALL",
+            "primary_key_columns": "ARINTERESTHEADERINTERESTHEADERID",
+            "incremental_date_columns": "ARINTERESTHEADERLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_019_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_020_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_INTEREST_LINES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_INTEREST_LINES_ALL",
+            "raw_table": "helix_raw.FUSION_AR_INTEREST_LINES_ALL",
+            "primary_key_columns": "ARINTERESTLINEINTERESTLINEID",
+            "incremental_date_columns": "ARINTERESTLINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_020_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_021_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_MEMO_LINES_ALL_B",
+            "dl_table": "helix_dl.DL_FUSION_AR_MEMO_LINES_ALL_B",
+            "raw_table": "helix_raw.FUSION_AR_MEMO_LINES_ALL_B",
+            "primary_key_columns": "ARMEMOLINEMEMOLINESEQID",
+            "incremental_date_columns": "ARMEMOLINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_021_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_022_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_MEMO_LINES_ALL_TL",
+            "dl_table": "helix_dl.DL_FUSION_AR_MEMO_LINES_ALL_TL",
+            "raw_table": "helix_raw.FUSION_AR_MEMO_LINES_ALL_TL",
+            "primary_key_columns": "ARMEMOLINETLLANGUAGE,ARMEMOLINETLMEMOLINEID,ARMEMOLINETLSETID",
+            "incremental_date_columns": "ARMEMOLINETLLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_022_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_023_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_MISC_CASH_DISTRIBUTIONS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_MISC_CASH_DISTRIBUTIONS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_MISC_CASH_DISTRIBUTIONS_ALL",
+            "primary_key_columns": "ARMISCCASHDISTRIBUTIONMISCCASHDISTRIBUTIONID",
+            "incremental_date_columns": "ARMISCCASHDISTRIBUTIONLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_023_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_024_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_PAYMENT_SCHEDULES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_PAYMENT_SCHEDULES_ALL",
+            "raw_table": "helix_raw.FUSION_AR_PAYMENT_SCHEDULES_ALL",
+            "primary_key_columns": "ARPAYMENTSCHEDULEPAYMENTSCHEDULEID",
+            "incremental_date_columns": "ARPAYMENTSCHEDULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_024_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_025_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_TERMS_B",
+            "dl_table": "helix_dl.DL_FUSION_RA_TERMS_B",
+            "raw_table": "helix_raw.FUSION_RA_TERMS_B",
+            "primary_key_columns": "RATERMBTERMID",
+            "incremental_date_columns": "RATERMBLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_025_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_026_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_TERMS_LINES",
+            "dl_table": "helix_dl.DL_FUSION_RA_TERMS_LINES",
+            "raw_table": "helix_raw.FUSION_RA_TERMS_LINES",
+            "primary_key_columns": "RATERMSLINESEQUENCENUM,RATERMSLINETERMID",
+            "incremental_date_columns": "RATERMSLINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_026_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_027_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_TERMS_TL",
+            "dl_table": "helix_dl.DL_FUSION_RA_TERMS_TL",
+            "raw_table": "helix_raw.FUSION_RA_TERMS_TL",
+            "primary_key_columns": "RATERMTLLANGUAGE,RATERMTLTERMID",
+            "incremental_date_columns": "RATERMTLLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_027_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_028_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_BATCHES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_BATCHES_ALL",
+            "raw_table": "helix_raw.FUSION_AR_BATCHES_ALL",
+            "primary_key_columns": "ARBATCHBATCHID",
+            "incremental_date_columns": "ARBATCHLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_028_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_029_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CASH_RECEIPTS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_CASH_RECEIPTS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_CASH_RECEIPTS_ALL",
+            "primary_key_columns": "ARCASHRECEIPTCASHRECEIPTID",
+            "incremental_date_columns": "ARCASHRECEIPTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_029_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_030_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_CASH_RECEIPT_HISTORY_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_CASH_RECEIPT_HISTORY_ALL",
+            "raw_table": "helix_raw.FUSION_AR_CASH_RECEIPT_HISTORY_ALL",
+            "primary_key_columns": "ARCASHRECEIPTHISTORYCASHRECEIPTHISTORYID",
+            "incremental_date_columns": "ARCASHRECEIPTHISTORYLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_030_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_031_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_RECEIPT_METHOD_ACCOUNTS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_RECEIPT_METHOD_ACCOUNTS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_RECEIPT_METHOD_ACCOUNTS_ALL",
+            "primary_key_columns": "ARRECEIPTMETHODACCOUNTRECEIPTMETHODID,ARRECEIPTMETHODACCOUNTREMITBANKACCTUSEID",
+            "incremental_date_columns": "ARRECEIPTMETHODACCOUNTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_031_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_032_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_RECEIPT_METHODS",
+            "dl_table": "helix_dl.DL_FUSION_AR_RECEIPT_METHODS",
+            "raw_table": "helix_raw.FUSION_AR_RECEIPT_METHODS",
+            "primary_key_columns": "ARRECEIPTMETHODRECEIPTMETHODID",
+            "incremental_date_columns": "ARRECEIPTMETHODLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_032_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_033_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_RECEIVABLES_TRX_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_RECEIVABLES_TRX_ALL",
+            "raw_table": "helix_raw.FUSION_AR_RECEIVABLES_TRX_ALL",
+            "primary_key_columns": "ARRECEIVABLESTRXORGID,ARRECEIVABLESTRXRECEIVABLESTRXID",
+            "incremental_date_columns": "ARRECEIVABLESTRXLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_033_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_034_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_RECEIVABLE_APPLICATIONS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_RECEIVABLE_APPLICATIONS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_RECEIVABLE_APPLICATIONS_ALL",
+            "primary_key_columns": "ARRECEIVABLEAPPLICATIONRECEIVABLEAPPLICATIONID",
+            "incremental_date_columns": "ARRECEIVABLEAPPLICATIONLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_034_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_035_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_REF_ACCOUNTS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_REF_ACCOUNTS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_REF_ACCOUNTS_ALL",
+            "primary_key_columns": "ARREFACCOUNTBUID,ARREFACCOUNTSOURCEREFACCOUNTID,ARREFACCOUNTSOURCEREFTABLE",
+            "incremental_date_columns": "ARREFACCOUNTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_035_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_036_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_REMIT_TOS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_REMIT_TOS_ALL",
+            "raw_table": "helix_raw.FUSION_RA_REMIT_TOS_ALL",
+            "primary_key_columns": "RAREMITTOADDRESSSEQID",
+            "incremental_date_columns": "RAREMITTOLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_036_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_037_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_REMIT_TO_LOCS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_REMIT_TO_LOCS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_REMIT_TO_LOCS_ALL",
+            "primary_key_columns": "ARREMITTOLOCADDRESSLOCSEQID",
+            "incremental_date_columns": "ARREMITTOLOCLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_037_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_038_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_REVENUE_ADJUSTMENTS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_REVENUE_ADJUSTMENTS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_REVENUE_ADJUSTMENTS_ALL",
+            "primary_key_columns": "ARREVENUEADJUSTMENTREVENUEADJUSTMENTID",
+            "incremental_date_columns": "ARREVENUEADJUSTMENTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_038_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_039_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_SALES_CREDIT_TYPES",
+            "dl_table": "helix_dl.DL_FUSION_AR_SALES_CREDIT_TYPES",
+            "raw_table": "helix_raw.FUSION_AR_SALES_CREDIT_TYPES",
+            "primary_key_columns": "ARSALESCREDITTYPESALESCREDITTYPEID",
+            "incremental_date_columns": "ARSALESCREDITTYPELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_039_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_040_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_STANDARD_TEXT_TL",
+            "dl_table": "helix_dl.DL_FUSION_AR_STANDARD_TEXT_TL",
+            "raw_table": "helix_raw.FUSION_AR_STANDARD_TEXT_TL",
+            "primary_key_columns": "ARSTANDARDTEXTTLLANGUAGE,ARSTANDARDTEXTTLSTANDARDTEXTID",
+            "incremental_date_columns": "ARSTANDARDTEXTTLLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_040_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_041_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_STATEMENT_CYCLES",
+            "dl_table": "helix_dl.DL_FUSION_AR_STATEMENT_CYCLES",
+            "raw_table": "helix_raw.FUSION_AR_STATEMENT_CYCLES",
+            "primary_key_columns": "ARSTATEMENTCYCLESTATEMENTCYCLEID",
+            "incremental_date_columns": "ARSTATEMENTCYCLELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_041_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_042_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_SYSTEM_PARAMETERS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_SYSTEM_PARAMETERS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_SYSTEM_PARAMETERS_ALL",
+            "primary_key_columns": "ARSYSTEMPARAMETERORGID",
+            "incremental_date_columns": "ARSYSTEMPARAMETERLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_042_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_043_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_BATCHES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_BATCHES_ALL",
+            "raw_table": "helix_raw.FUSION_RA_BATCHES_ALL",
+            "primary_key_columns": "RABATCHBATCHID",
+            "incremental_date_columns": "RABATCHLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_043_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_044_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_BATCH_SOURCES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_BATCH_SOURCES_ALL",
+            "raw_table": "helix_raw.FUSION_RA_BATCH_SOURCES_ALL",
+            "primary_key_columns": "RABATCHSOURCEBATCHSOURCESEQID",
+            "incremental_date_columns": "RABATCHSOURCELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_044_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_045_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_CUST_TRX_LINE_GL_DIST_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_CUST_TRX_LINE_GL_DIST_ALL",
+            "raw_table": "helix_raw.FUSION_RA_CUST_TRX_LINE_GL_DIST_ALL",
+            "primary_key_columns": "RACUSTTRXLINEGLDISTCUSTTRXLINEGLDISTID",
+            "incremental_date_columns": "RACUSTTRXLINEGLDISTLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_045_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_046_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_CUSTOMER_TRX_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_CUSTOMER_TRX_ALL",
+            "raw_table": "helix_raw.FUSION_RA_CUSTOMER_TRX_ALL",
+            "primary_key_columns": "RACUSTOMERTRXCUSTOMERTRXID",
+            "incremental_date_columns": "RACUSTOMERTRXLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_046_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_047_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_CUSTOMER_TRX_LINES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_CUSTOMER_TRX_LINES_ALL",
+            "raw_table": "helix_raw.FUSION_RA_CUSTOMER_TRX_LINES_ALL",
+            "primary_key_columns": "RACUSTOMERTRXLINECUSTOMERTRXLINEID",
+            "incremental_date_columns": "RACUSTOMERTRXLINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_047_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_048_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_DEFERRED_LINES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_DEFERRED_LINES_ALL",
+            "raw_table": "helix_raw.FUSION_AR_DEFERRED_LINES_ALL",
+            "primary_key_columns": "ARDEFERREDLINECUSTOMERTRXLINEID",
+            "incremental_date_columns": "ARDEFERREDLINELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_048_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_049_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_GROUPING_RULES",
+            "dl_table": "helix_dl.DL_FUSION_RA_GROUPING_RULES",
+            "raw_table": "helix_raw.FUSION_RA_GROUPING_RULES",
+            "primary_key_columns": "RAGROUPINGRULEGROUPINGRULEID",
+            "incremental_date_columns": "RAGROUPINGRULELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_049_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_050_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_RA_CUST_TRX_TYPES_ALL",
+            "dl_table": "helix_dl.DL_FUSION_RA_CUST_TRX_TYPES_ALL",
+            "raw_table": "helix_raw.FUSION_RA_CUST_TRX_TYPES_ALL",
+            "primary_key_columns": "RACUSTTRXTYPECUSTTRXTYPESEQID",
+            "incremental_date_columns": "RACUSTTRXTYPELASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_050_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_051_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_TRANSMISSIONS_ALL",
+            "dl_table": "helix_dl.DL_FUSION_AR_TRANSMISSIONS_ALL",
+            "raw_table": "helix_raw.FUSION_AR_TRANSMISSIONS_ALL",
+            "primary_key_columns": "ARTRANSMISSIONTRANSMISSIONID",
+            "incremental_date_columns": "ARTRANSMISSIONLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_051_STG_LOAD"
+          ]
+        },
+        {
+          "task_name": "AR_052_MERGE",
+          "template_reference": "FUSION-DATA-MERGE-1",
+          "task_type": "MERGE",
+          "config": {
+            "stg_table": "helix_stg.STG_FUSION_AR_TRANSMISSION_FORMATS",
+            "dl_table": "helix_dl.DL_FUSION_AR_TRANSMISSION_FORMATS",
+            "raw_table": "helix_raw.FUSION_AR_TRANSMISSION_FORMATS",
+            "primary_key_columns": "ARTRANSMISSIONFORMATTRANSMISSIONFORMATID",
+            "incremental_date_columns": "ARTRANSMISSIONFORMATLASTUPDATEDATE"
+          },
+          "upstream_tasks": [
+            "AR_052_STG_LOAD"
+          ]
+        }
+      ]
+    },
+    "template_config":
+    {
+        "merge_templates":
+        [
+            {
+                "template_id": "FUSION-DATA-MERGE-1",
+                "merge_type": "MERGE_UPDATE",
+                "config":
+                {
+                    "primary_key_columns": "",
+                    "incremental_date_columns": "",
+                    "truncate_stg_table": "True"
+                },
+                "lag_minutes": 0
+            }
+        ],
+        "execution_templates":
+        [
+            {
+                "template_id": "FUSION_UCM2GCS",
+                "execution_type": "DATAFLOW",
+                "config":
+                {
+                    "dataflow_template_location": "gs://eqx-helix-fusion-dev/templates/fusiontogcp.json",
+                    "parameters":
+                    {
+                        "projectId": "it-helix-platform-dev",
+                        "bucketName": "helix-finance-test",
+                        "inboundFolderPath": "inbound_gl",
+                        "processedFolderPath": "processed_gl",
+                        "jsonToCsvFolderPath": "inbound_gl/metadata_json",
+                        "metadataToCsvFolderPath": "inbound_gl/metadata_table",
+                        "controlSchduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+                        "soapEndPointUrl": "https://fa-etfl-dev15-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+                        "soapAction": "soapAction for the pipeline",
+                        "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+                        "soapUcm": "http://www.oracle.com/UCM",
+                        "username": "eqx_helix",
+                        "secret": "oracle-dev15-password",
+                        "bip_files": "BIP_EXTRACT_GL_DAILY_RATES_REPORT",
+                        "bicc_schedule_names": " where IS_ACTIVE=true and SCHEDULE_NAME IN ('EQX_GL_ALL_EXTRACT_SCHEDULE' ) ",
+                        "currentTime": "?",
+                        "bip_lastRunTime": "?",
+                        "bip_dag_run_id": "?"
+                    },
+                    "environment":
+                    {
+                        "tempLocation": "gs://helix-finance-test/dataflow/temp/fusion_ucm2gcs/",
+                        "stagingLocation": "gs://helix-finance-test/dataflow/staging/fusion_ucm2gcs/",
+                        "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+                        "network": "eqx-nonprod"
+                    }
+                },
+                "lag_minutes": 0
+            },
+            {
+                "template_id": "FUSION_GCS2BQ",
+                "execution_type": "GCS_TO_BQ",
+                "config":
+                {
+                    "source_format": "CSV",
+                    "skip_leading_rows" : "1",
+                    "autodetect": "False",
+                    "write_disposition" : "WRITE_TRUNCATE",
+                    "allow_quoted_newlines" : "True",
+                    "retries":"0"
+                }
+            }
+        ]
+    }
+}

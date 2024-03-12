@@ -1,0 +1,174 @@
+{
+    "dag_config": {
+      "dag_id": "helix_fin_ms_ingestion_dev11",
+      "owner": "IT-Finance-Analytics-Dev-Team",
+      "start_date": "2023-05-30",
+      "schedule_interval": null,
+      "time_zone": "Asia/Bangkok",
+      "depends_on_past": false,
+      "retries": 2,
+      "retry_delay": 60,
+      "email": [
+        "IT-Finance-Analytics-Dev@equinix.com"
+      ],
+      "email_on_failure": true,
+      "email_on_retry": false,
+      "sla": 60,
+      "tags": [
+        "fusion-ingestion-orchfw"
+      ],
+      "tags_for_batch_holds": [
+        "FUSION-MS",
+        "FUSION-ALL"
+      ],
+      "framework_version": "v1.0"
+    },
+    "task_config": {
+      "airflow_variable_id_for_impersonation_chain": "helix-orchestrator-fusion-impersonation-chain-json-list",
+      "data_project_id": "helix-data-dev",
+      "tasks": [
+        {
+          "task_name": "UCM_TO_GCS",
+          "task_type": "EXECUTION",
+          "template_reference": "FUSION_UCM2GCS",
+          "config": {
+              "parameters": {},
+              "environment": {}
+          }
+      }
+      ]
+    },
+    "template_config": {
+      "merge_templates": [
+        {
+          "template_id": "FUSION_DATA_MERGE_STG_TO_DL_AND_RAW",
+          "merge_type": "MERGE_UPDATE",
+          "config": {
+            "primary_key_columns": "",
+            "incremental_date_columns": "",
+            "truncate_stg_table": "True"
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "FUSION-SOFT-DEL-MERGE-1",
+          "merge_type": "UPDATE_SD_ALL_PK",
+          "config": {
+            "primary_key_columns": "",
+            "incremental_date_columns": ""
+          },
+          "lag_minutes": 0
+        }
+      ],
+      "execution_templates": [
+        {
+          "template_id": "FUSION_UCM2GCS",
+          "execution_type": "DATAFLOW",
+          "config":
+          {
+            "dataflow_template_location": "gs://eqx-helix-fusion-dev/templates/fusiontogcp_dev_integrated_version_3.json",
+            "parameters":
+            {
+              "projectId": "it-helix-platform-dev",
+              "bucketName": "helix-fin-oc-ms-dev",
+              "inboundFolderPath": "ms_inbound",
+              "currentFolderPath": "current_run_ms",
+              "currentFolderDecryptedPath":"Decrypted_Folder_gpg_ms",
+              "jsonToCsvFolderPath": "ms_inbound/metadata_json",
+              "metadataToCsvFolderPath": "ms_inbound/metadata_table",
+              "controlScheduleTableName": "helix-data-dev.BQ_CTL_METADATA.BQ_CTL_PROC_LOGGING",
+              "soapEndPointUrl": "https://fa-etfl-dev11-saasfaprod1.fa.ocs.oraclecloud.com:443/idcws/GenericSoapPort",
+              "soapAction": "soapAction for the pipeline",
+              "soapEnv": "http://schemas.xmlsoap.org/soap/envelope/",
+              "soapUcm": "http://www.oracle.com/UCM",
+              "username": "eqx_helix",
+              "secret": "oracle-fusion-dev11-password",
+              "bipFiles":"NOFILE",
+              "incrementalBipFiles": "NOFILE",
+              "biccScheduleNames": "helix_fin_ms_data_extract_schedule_sit",
+              "bipDagRunId": "{{ get_audit_param('dag_run_id') }}",
+              "bipLastRunTime":"{{ get_audit_param('from_delta_key') }}",
+              "currentTime":"{{ get_audit_param('to_delta_key') }}",
+              "pgpSecretIdForPublicKey": "oracle-dev7-publickey",
+              "pgpSecretIdForPrivateKey": "oracle-dev7-privatekey",
+              "pgpSecretIdForPassphrase": "oracle-dev7-passphrase"
+            },
+            "environment": {
+              "tempLocation": "gs://helix-fin-oc-ms-dev/dataflow/temp/fusion_ucm2gcs/",
+              "stagingLocation": "gs://helix-fin-oc-ms-dev/dataflow/staging/fusion_ucm2gcs/",
+              "subnetwork": "https://www.googleapis.com/compute/v1/projects/nonprod-shared-l2/regions/us-west1/subnetworks/eqx-non-prod-helix-platform-dev",
+              "network": "eqx-nonprod",
+              "numWorkers": 10,
+              "maxWorkers": 100
+            }
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "FUSION_GCS2BQ_UCM",
+          "execution_type": "GCS_TO_BQ",
+          "config": {
+            "source_format": "CSV",
+            "skip_leading_rows": "1",
+            "autodetect": "False",
+            "write_disposition": "WRITE_APPEND",
+            "allow_quoted_newlines": "True",
+            "retries": "0"
+          }
+        },
+        {
+            "template_id": "FUSION_GCS2BQ",
+            "execution_type": "GCS_TO_BQ",
+            "config": {
+              "source_format": "CSV",
+              "skip_leading_rows": "1",
+              "autodetect": "False",
+              "write_disposition": "WRITE_TRUNCATE",
+              "allow_quoted_newlines": "True",
+              "retries": "0"
+            }
+        },
+        {
+          "template_id": "SQL_DW_PROC_1",
+          "execution_type": "SQL",
+          "config": {
+            "sql_statement_type": "MULTI_STATEMENT"
+          },
+          "lag_minutes": 0
+        },
+        {
+            "template_id": "DAG_TRIGGER_TEMPLATE",
+            "execution_type": "TRIGGER_DAG",
+            "config": {},
+            "lag_minutes": 0
+        },
+        {
+          "template_id": "EXASOL_SYNC_DAG_TRIGGER",
+          "execution_type": "TRIGGER_DAG",
+          "config": {
+            "trigger_dag_id": "bigquery_exasol_sync",
+            "wait_for_completion": false,
+            "parameters": {
+              "batch_name": "AR_BQ_TO_EXASOL_SYNC",
+              "etl_proc_wid": "{{ get_audit_param('dag_run_id') }}"
+            }
+          },
+          "lag_minutes": 0
+        },
+        {
+          "template_id": "GCS_TO_GCS_ARCHIVE",
+          "execution_type": "GCS_TO_GCS",
+          "config": {
+            "source_bucket": "helix-fin-oc-ms-dev",
+            "source_objects": [
+              "ms_inbound/*"
+            ],
+            "destination_bucket": "helix-fin-oc-ms-dev",
+            "destination_object": "ms_archive/{{ get_audit_param('dag_run_id') }}/",
+            "move_object": true
+          },
+          "lag_minutes": 0
+        }
+      ]
+    }
+  }

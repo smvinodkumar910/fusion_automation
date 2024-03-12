@@ -1,0 +1,53 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "UCM_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "File_Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Parent_UCM_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Extraction_Date_Time",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "GCP_Copied_Date_Time",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "DocId",
+    "type": "STRING"
+  },
+  {
+    "maxLength": "1",
+    "mode": "NULLABLE",
+    "name": "Req_Dwnld",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "File_Creation_Date",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Request_Id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "DAG_RUN_ID",
+    "type": "STRING"
+  }
+]
